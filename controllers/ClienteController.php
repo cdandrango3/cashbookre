@@ -86,6 +86,7 @@ public function actionIndex($tipos){
     }
     public function actionFactura()
     {
+        $_SESSION['id_ins'] = Institution::findOne(['users_id'=>Yii::$app->user->identity->id]);
         $model = new HeadFact;
         $person = new Person;
         $client=New Clients;
