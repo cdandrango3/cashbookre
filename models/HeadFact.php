@@ -17,7 +17,6 @@ use Yii;
  * @property string|null $tipo_de_documento
  * @property int|null $id_saleman
  * @property int $id
- *
  * @property Person $personas
  * @property Person $saleman
  */
@@ -64,7 +63,7 @@ class HeadFact extends \yii\db\ActiveRecord
             'autorizacion' => 'Autorización',
             'tipo_de_documento' => 'Tipo De Documento',
             'id_saleman' => 'Id Saleman',
-            'id' => 'ID',
+            'id' => 'ID'
         ];
     }
 
@@ -77,7 +76,10 @@ class HeadFact extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Person::className(), ['id' => 'id_personas']);
     }
-
+    public function getInstitution()
+    {
+        return $this->hasOne(Institution::className(), ['id' => 'institution_id']);
+    }
     /**
      * Gets query for [[Saleman]].
      *

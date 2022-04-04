@@ -108,7 +108,7 @@ if(Yii::$app->session->hasFlash("error")) {
         function ajax(c,p,t){
         $.ajax({
               method: "POST",             
-               url: '/web/cliente/buscarf?fil='+c+'&&per='+p+'&&tipo='+t,
+               url: '/cliente/buscarf?fil='+c+'&&per='+p+'&&tipo='+t,
                data: { tipo:$('#nfac').val() },
             success: function(data) {
                 $("#ver").html(data)        

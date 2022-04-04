@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Institution;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\web\View;
@@ -10,15 +11,16 @@ use kartik\select2\Select2;
 /* @var $this yii\web\View */
 /* @var $model app\models\product */
 /* @var $form yii\widgets\ActiveForm */
+$id_ins=Institution::findOne(['users_id'=>Yii::$app->user->identity->id]);
 $accountdata = ArrayHelper::map(\app\models\ChartAccounts::find()
     ->Select(["id,concat(code,' ',slug) as name"])
     ->alias('t')
-    ->where(['(select count(*) from chart_accounts t2 where t2.parent_id=t.id)'=>0])->asArray()->all(),'id', 'name');
+    ->where(['(select count(*) from chart_accounts t2 where t2.parent_id=t.id)'=>0])->andWhere(['institution_id'=>$id_ins->id])->asArray()->all(),'id', 'name');
 
 $accountdataingresos = ArrayHelper::map(\app\models\ChartAccounts::find()
     ->Select(["id,concat(code,' ',slug) as name"])
     ->alias('t')
-    ->where(['(select count(*) from chart_accounts t2 where t2.parent_id=t.id)'=>0])->andWhere(['parent_id'=>13363])->asArray()->all(),'id', 'name');
+    ->where(['(select count(*) from chart_accounts t2 where t2.parent_id=t.id)'=>0])->andWhere(['parent_id'=>13364])->andWhere(['institution_id'=>$id_ins->id])->asArray()->all(),'id', 'name');
 
 Yii::debug($accountdataingresos);
 $listpr=ArrayHelper::map($model2,"name","name");

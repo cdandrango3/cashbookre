@@ -19,6 +19,7 @@ use Yii;
  * @property int|null $chairaccount_id
  * @property int|null $Chairinve
  * @property int|null $charingresos
+ * @property int|null $institution_id
  *
  * @property FacturaBody[] $facturaBodies
  */
@@ -40,7 +41,8 @@ class Product extends \yii\db\ActiveRecord
         return [
             [['name', 'product_type_id', 'product_iva_id'], 'required'],
             [['status'], 'boolean'],
-            [['product_type_id', 'chairaccount_id', 'Chairinve', 'charingresos'], 'integer'],
+            [['product_type_id', 'chairaccount_id', 'Chairinve', 'charingresos', 'institution_id'], 'default', 'value' => null],
+            [['product_type_id', 'chairaccount_id', 'Chairinve', 'charingresos', 'institution_id'], 'integer'],
             [['product_iva_id', 'precio', 'costo'], 'number'],
             [['name', 'brand'], 'string', 'max' => 250],
             [['category'], 'string', 'max' => 258],
@@ -66,6 +68,7 @@ class Product extends \yii\db\ActiveRecord
             'chairaccount_id' => 'Chairaccount ID',
             'Chairinve' => 'Chairinve',
             'charingresos' => 'Charingresos',
+            'institution_id' => 'Institution ID',
         ];
     }
 

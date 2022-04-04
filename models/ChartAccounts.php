@@ -8,6 +8,7 @@ use Yii;
  * This is the model class for table "chart_accounts".
  *
  * @property int $id
+ * @property int $id_ins
  * @property string $code
  * @property string $slug
  * @property int $institution_id
@@ -43,7 +44,7 @@ class ChartAccounts extends \yii\db\ActiveRecord
     }
     public static function primaryKey()
     {
-        return ["id"];
+        return ["id_ins"];
     }
     /**
      * {@inheritdoc}
@@ -68,6 +69,7 @@ class ChartAccounts extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
+            'id_ins' => 'id_ins',
             'code' => 'Código',
             'slug' => 'Cuenta',
             'institution_id' => 'Institution ID',
@@ -84,11 +86,12 @@ class ChartAccounts extends \yii\db\ActiveRecord
     /**
      * Gets query for [[AccountingSeatsDetails]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return ChartAccounts[]|array|\yii\db\ActiveQuery|\yii\db\ActiveRecord[]
      */
     public static function getchar($id){
+        $id_ins=Institution::findOne(['users_id'=>Yii::$app->user->identity->id]);
        $c= ChartAccounts::find()
-            ->where(['parent_id'=>$id])->all();
+            ->where(['parent_id'=>$id])->andWhere(['institution_id'=>$id_ins])->all();
 
 
         return $c;

@@ -42,7 +42,10 @@ class ChartAccountsSearch extends ChartAccounts
      * @return ActiveDataProvider
      */
     public function search($params)
+
     {
+    $id_ins=Institution::findOne(['users_id'=>Yii::$app->user->identity->id]);
+    Yii::debug($id_ins->id);
         $query = $this::find()->select(["*,
         (select count(*) as childs from chart_accounts as t6 where t6.parent_id = t.id)
         ,
@@ -53,9 +56,11 @@ class ChartAccountsSearch extends ChartAccounts
               FROM
                 public.accounting_seats_details as t5
                 INNER JOIN public.accounting_seats as t4 ON (t5.accounting_seat_id = t4.id)
+                
                 INNER JOIN public.chart_accounts as t3 ON (t5.chart_account_id = t3.id)
               WHERE
-                t4.institution_id = t.institution_id AND  
+                t4.institution_id = ".$id_ins->id." AND  
+                t3.institution_id = ".$id_ins->id." AND  
                 substring(t3.code, 1, char_length((t.code))) = (t.code)           
                 )
         )"])->alias('t');
@@ -82,7 +87,7 @@ class ChartAccountsSearch extends ChartAccounts
 
         $query->andFilterWhere([
             'id' => $this->id,
-            'institution_id' => $this->institution_id,
+            'institution_id' => $id_ins->id,
             'bigparent_id' => $this->bigparent_id,
             'parent_id' => $this->parent_id,
             'status' => $this->status,
@@ -100,6 +105,8 @@ class ChartAccountsSearch extends ChartAccounts
     public function searchbigbook($params)
     {
 
+        $id_ins=Institution::findOne(['users_id'=>Yii::$app->user->identity->id]);
+
         $this->account = isset($params['AccountingSeats']['account']) ? $params['AccountingSeats']['account'] : $this->account;
         $this->cost_center = isset($params['AccountingSeats']['cost_center']) ? $params['AccountingSeats']['cost_center'] : null;
         $this->datefrom = isset($params['AccountingSeats']['datefrom']) ? $params['AccountingSeats']['datefrom'] : date('Y-m-d', strtotime('first day of this month'));
@@ -109,9 +116,9 @@ class ChartAccountsSearch extends ChartAccounts
             $this->datefrom = $this->dateto;
             $this->dateto = $t;
         }
-        $tmodel = $this::findOne($this->account);
+        $tmodel = $this::find()->where(["id"=>$this->account])->andwhere(["institution_id"=>$id_ins->id])->one();
         $accounts = ChartAccounts::find()->select(["*,
-        (select count(*) as childs from chart_accounts as t6 where t6.parent_id = t.id)
+        (select count(*) as childs from chart_accounts as t6 where t6.parent_id = t.id  )
         ,
         (
             (
@@ -123,12 +130,13 @@ class ChartAccountsSearch extends ChartAccounts
                 INNER JOIN public.chart_accounts as t3 ON (t5.chart_account_id = t3.id)
               WHERE
                 t4.date < '$this->datefrom' and 
-                t4.institution_id = t.institution_id AND 
+                t4.institution_id = ".$id_ins->id."AND 
+                t3.institution_id = ".$id_ins->id."AND 
                 substring(t3.code, 1, char_length(t.code)) = t.code           
                 )
         )"])
             ->andWhere("substring(t.code, 1, char_length('$tmodel->code')) = '$tmodel->code'")
-            ->andWhere(['institution_id' => $this->institution_id])
+            ->andWhere(['institution_id' => $id_ins->id])
             ->alias('t')
             ->orderBy(['code' => SORT_ASC, 'parent_id' => SORT_ASC])
             ->all();
@@ -154,7 +162,7 @@ class ChartAccountsSearch extends ChartAccounts
             t.credit') 
             ->alias('t')
             ->innerJoin('accounting_seats t2','(t.accounting_seat_id = t2.id)')
-            ->where(['institution_id'=>$this->institution_id])
+            ->where(['institution_id'=>$id_ins->id])
             ->andWhere(['between','date',$this->datefrom,$this->dateto])
             ->andWhere(['chart_account_id'=>$account->id])
             ->andFilterWhere(['cost_center_id'=>$this->cost_center])

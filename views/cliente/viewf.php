@@ -29,6 +29,8 @@ $this->registerCss("");
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                     <a href='<?=Url::to(['cliente/pdfview', 'id' => $model->n_documentos,"ischair"=>true])?>'class="btn btn-default" target="_blank" title="Exportar a pdf" data-toggle="tooltip"> Pdf con asiento</a>
                     <a href='<?=Url::to(['cliente/pdfview', 'id' => $model->n_documentos,"ischair"=>false])?>'class="btn btn-default" target="_blank" title="Exportar a pdf" data-toggle="tooltip"> Pdf sin asiento</a>
+                    <a href='<?=Url::to(['cliente/matrixial', 'id' => $model->n_documentos,"ischair"=>false])?>'class="btn btn-default" target="_blank" title="Exportar a pdf" data-toggle="tooltip"> A matricial</a>
+
                 </div>
 
             </div>
@@ -127,7 +129,11 @@ $this->registerCss("");
 
                         <tr>
                             <td>
-                                <strong>Subtotal:   </strong> </td> <td> <div class="su"><?=$modelfin->subtotal12?></td>
+                                <strong>Subtotal 12%:   </strong> </td> <td> <div class="su"><?=$modelfin->subtotal12?></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Subtotal 0%:   </strong> </td> <td> <div class="su"><?=$modelfin->subtotal0?:0 ?> </td>
                         </tr>
                         <tr>
                             <td><strong>Iva: </strong> </td> <td> <div class="su"> <?=$modelfin->iva ?></td></div>

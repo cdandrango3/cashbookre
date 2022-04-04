@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Institution;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -10,11 +11,11 @@ use yii\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 
 $type_account=ArrayHelper::map(\app\models\BankAccountType::find()->asArray()->all(), 'id', 'name');
-
+$id_ins=Institution::findOne(['users_id'=>Yii::$app->user->identity->id]);
 $chart_account=ArrayHelper::map(\app\models\ChartAccounts::find()
     ->Select(["id,concat(code,' ',slug) as name"])
     ->alias('t')
-    ->where(['(select count(*) from chart_accounts t2 where t2.parent_id=t.id)'=>0])->andWhere(['parent_id'=>13125])->asArray()->all(),'id', 'name');
+    ->where(['(select count(*) from chart_accounts t2 where t2.parent_id=t.id)'=>0])->andWhere(['parent_id'=>13125])->andWhere(["institution_id"=>$id_ins->id])->asArray()->all(),'id', 'name');
      $bank_name=ArrayHelper::map(\app\models\Bank::find()->asArray()->all(), 'id', 'name');
      $city=ArrayHelper::map(\app\models\City::find()->asArray()->all(), 'id', 'cityname');
 ?>

@@ -40,7 +40,7 @@ use yii\helpers\Url;
 			   <br>
 			   <img src="<?= Yii::getAlias('@web') . "/images/grupo.png"; ?>" width="90" class="img-circle elevation-2" alt="User Image">
 			   <br><br>
-			  <h5>Registrar prersonas</h5>
+			  <h5>Registrar personas</h5>
 			  </a>
             </div>
           </div>
@@ -51,7 +51,7 @@ use yii\helpers\Url;
 			   <br>
 			   <img src="<?= Yii::getAlias('@web') . "/images/cobro.png"; ?>" width="90" class="img-circle elevation-2" alt="User Image">
 			   <br><br>
-			  <h5>Registrar una cobro</h5>
+			  <h5>Registrar un cobro</h5>
 			  </a>
             </div>
           </div>
@@ -62,7 +62,7 @@ use yii\helpers\Url;
 			   <br>
 			   <img src="<?= Yii::getAlias('@web') . "/images/servicioproducto.png"; ?>" width="90" class="img-circle elevation-2" alt="User Image">
 			   <br><br>
-			  <h5>Registrar una compra</h5>
+			  <h5>Registrar una venta/compra</h5>
 			  </a>
             </div>
           </div>

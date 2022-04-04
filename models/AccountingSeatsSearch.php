@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
@@ -46,6 +47,8 @@ class AccountingSeatsSearch extends AccountingSeats
      */
     public function search($params)
     {
+
+        $id_ins=Institution::findOne(['users_id'=>Yii::$app->user->identity->id]);
         $query = AccountingSeats::find();
         $query2 = AccountingSeatsDetails::find();
         // add conditions that should always apply here
@@ -60,9 +63,11 @@ class AccountingSeatsSearch extends AccountingSeats
         $this->cost_center = isset($params['AccountingSeats']['cost_center']) ? $params['AccountingSeats']['cost_center'] : null;
         $this->datefrom = isset($params['AccountingSeats']['datefrom']) ? $params['AccountingSeats']['datefrom'] : date('Y-m-d', strtotime('first day of this month'));
         $this->dateto = isset($params['AccountingSeats']['dateto']) ? $params['AccountingSeats']['dateto'] : date('Y-m-d');
+
         if ($this->account || $this->cost_center || $this->datefrom || $this->dateto) {
             $query2->select('accounting_seats.id')->from('accounting_seats')->innerJoin('accounting_seats_details', 'accounting_seats_details.accounting_seat_id = accounting_seats.id')->distinct('accounting_seats.id');
             $query2->andFilterWhere(['chart_account_id' => $this->account]);
+            $query2->andFilterWhere(['institution_id' => $id_ins->id]);
             $query2->andFilterWhere(['cost_center_id' => $this->cost_center]);
             $query2->andFilterWhere(['between', 'date', $this->datefrom, $this->dateto]);
             $query2->andWhere(['accounting_seats_details.status' => 1, 'accounting_seats.status' => 1]);
@@ -80,7 +85,7 @@ class AccountingSeatsSearch extends AccountingSeats
             $query->andFilterWhere([
                 'id' => $this->id,
                 'date' => $this->date,
-                'institution_id' => $this->institution_id,
+                'institution_id' => 1,
                 'nodeductible' => $this->nodeductible,
                 'status' => $this->status,
 

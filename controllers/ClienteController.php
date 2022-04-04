@@ -14,8 +14,11 @@ use app\models\HeadFact;
 use app\models\Product;
 use app\models\ProductType;
 use app\models\Providers;
+use app\models\Retention;
+use app\models\Retentiondetail;
 use app\models\Salesman;
 use Cassandra\Date;
+use kartik\mpdf\Pdf;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\Json;
@@ -30,24 +33,28 @@ class ClienteController extends controller
 {
     public $id;
     public $id_product;
+    public $id_ins=0;
 public function actionIndex($tipos){
     $models=New clients;
     $modelhead=New HeadFact;
     $modelf=New Facturafin;
+    $_SESSION['id_ins'] = Institution::findOne(['users_id'=>Yii::$app->user->identity->id]);
     if($tipos=="Cliente"){
-        $query1 = HeadFact::find()->where(["tipo_de_documento"=>"Cliente"]);
+
+        $query1 = HeadFact::find()->innerJoin("person","head_fact.id_personas=person.id")->where(["head_fact.tipo_de_documento"=>"Cliente"])->andWhere(["person.institution_id"=>
+            $_SESSION['id_ins']->id]);
     }
     else{
         if ($tipos=="Proveedor") {
-            $query1 = HeadFact::find()->where(["tipo_de_documento"=>"Proveedor"]);
+            $query1 = HeadFact::find()->innerJoin("person","head_fact.id_personas=person.id")->where(["head_fact.tipo_de_documento"=>"Proveedor"])->andWhere(["person.institution_id"=>
+                $_SESSION['id_ins']->id]);;
         }
         else{
-            $query1 = HeadFact::find();
+            $query1 = HeadFact::find()->innerJoin("person","head_fact.id_personas=person.id")->andWhere(["person.institution_id"=>
+                $_SESSION['id_ins']->id]);
         }
 
     }
-
-    Yii::debug($query1);
     $pages = new Pagination(['defaultPageSize' => 5,'totalCount' => $query1->count()]);
     $modelhe = $query1->offset($pages->offset)
         ->limit($pages->limit)
@@ -82,6 +89,7 @@ public function actionIndex($tipos){
         $model = new HeadFact;
         $person = new Person;
         $client=New Clients;
+        $retention = new Retentiondetail;
         $institucion=New Institution;
         $model_tip=New ProductType;
         $salesman = new Salesman;
@@ -90,16 +98,21 @@ public function actionIndex($tipos){
         $facturafin = new Facturafin;
         $accounting_seats=new AccountingSeats;
         $accounting_seats_details=New AccountingSeatsDetails;
-        $persona = $person::find()->select("name")->innerJoin("clients","person.id=clients.person_id")->all();
+        $persona = $person::find()->select("name")->innerJoin("clients","person.id=clients.person_id")->where(["institution_id"=>
+            $_SESSION['id_ins']->id])->all();
         $model_tipo=$model_tip::find()->select("name")->all();
-        $pro = $productos::find()->select("name")->all();
-        $precio = $productos::find()->all();
+        $pro = $productos::find()->select("name")->where(['institution_id'=>$_SESSION['id_ins']->id])->all();
+        $precio = $productos::find()->where(['institution_id'=>$_SESSION['id_ins']->id])->all();
         $precioser = $productos::find()->where(['product_type_id'=>2])->all();
         $d= Yii::$app->request->post('Facturafin');
         $per= Yii::$app->request->post('Person');
-        $query = $person::find()->innerJoin("clients","person.id=clients.person_id")->all();
-        $providers = $person::find()->innerJoin("providers","person.id=providers.person_id")->all();
-        $salesman=$person::find()->innerJoin("salesman","person.id=salesman.person_id")->all();
+
+        $retimp=Retention::find()->select(["(concat(retention.codesri,'._',retention.slug))",'retention.id'])->where(["type"=>1])->asArray()->all();
+        $retiva=Retention::find()->select(["(concat(retention.codesri,'._',retention.slug))",'retention.id'])->where(["type"=>2])->asArray()->all();
+
+        $query = $person::find()->innerJoin("clients","person.id=clients.person_id")->where(["person.institution_id"=>$_SESSION['id_ins']->id])->all();
+        $providers = $person::find()->innerJoin("providers","person.id=providers.person_id")->where(["person.institution_id"=>$_SESSION['id_ins']->id])->all();
+        $salesman=$person::find()->innerJoin("salesman","person.id=salesman.person_id")->where(["person.institution_id"=>$_SESSION['id_ins']->id])->all();
         if ($model->load(Yii::$app->request->post())) {
             $model->id_personas=$per["id"];
             $model->id_saleman=$per["id_ven"];
@@ -110,7 +123,8 @@ public function actionIndex($tipos){
                 $c = rand(1, 100090000);
                 $this->id=$c;
                 $facturafin->id = $c;
-                $facturafin->subtotal12 = $d["subtotal12"];
+                $facturafin->subtotal12 = $d["subtotal12"]?:0;
+                $facturafin->subtotal0 = $d["subtotal0"]?:0;
                 $facturafin->total = $d["total"];
                 $facturafin->iva = $d["iva"];
                 $facturafin->description = $d["description"];
@@ -126,14 +140,14 @@ public function actionIndex($tipos){
                         $accou_c = $ch1->chart_account_id;
                         $ins = $person::findOne(['id' => $model->id_personas]);
                         $ins = $person::findOne(['id' => $model->id_personas]);
-                        $id_ins = $ins->institution_id;
+
                         $descripcion = $facturafin->description;
                         $nodeductible = False;
                         $status = True;
                         $h = rand(1, 10000000);
                         $accounting_seats->id = $h;
                         $accounting_seats->head_fact = $model->n_documentos;
-                        $accounting_seats->institution_id = $id_ins;
+                        $accounting_seats->institution_id = $_SESSION['id_ins']->id;
                         $accounting_seats->description = $descripcion;
                         $accounting_seats->nodeductible = $nodeductible;
                         $accounting_seats->status = $status;
@@ -149,17 +163,14 @@ public function actionIndex($tipos){
                                 $sum=$sum+($bod->precio_total);
                                 if (!(is_null($cos->charingresos))) {
                                     $haber[] = $cos->charingresos;
-                                    yii::debug($haber);
                                     $suma[] = $bod->precio_total;
-                                    yii::debug($suma);
                                 }
-                                     yii::debug($haber);
+
                             }
 
 
                             Yii::debug(count($haber));
                             if(count($haber) !=0 ){
-                                Yii::debug("estoy aqui");
                                 $debea=$accou_c;
                                 $haber[]=13273;
                                 $i=count($haber);
@@ -224,7 +235,7 @@ public function actionIndex($tipos){
                                 $accounting_sea = new AccountingSeats;
                                 $accounting_sea->head_fact = $model->n_documentos;
                                 $accounting_sea->id = $gr;
-                                $accounting_sea->institution_id = $id_ins;
+                                $accounting_sea->institution_id =$_SESSION['id_ins']->id;
                                 $accounting_sea->description = $descripcion;
                                 $accounting_sea->nodeductible = $nodeductible;
                                 $accounting_sea->status = $status;
@@ -289,14 +300,12 @@ public function actionIndex($tipos){
                             $ch1 = Providers::findOne(['person_id' => $model->id_personas]);
                             $accou_c = $ch1->paid_chart_account_id;
                             $ins = $person::findOne(['id' => $model->id_personas]);
-                            $id_ins = $ins->institution_id;
-
                            $descripcion = $facturafin->description;
                            $nodeductible = False;
                             $status = True;
                             $accounting_seats->head_fact = $model->n_documentos;
                             $accounting_seats->id = $h;
-                            $accounting_seats->institution_id = $id_ins;
+                            $accounting_seats->institution_id = $_SESSION['id_ins']->id;
                             $accounting_seats->description = $descripcion;
                             $accounting_seats->nodeductible = $nodeductible;
                             $accounting_seats->status = $status;
@@ -318,7 +327,6 @@ public function actionIndex($tipos){
                                         }
                                 }
                                     $suma[]=$bod->precio_total;
-                                    yii::debug($suma);
                                 }
 
                                 $debea[]= 13161;
@@ -363,9 +371,49 @@ public function actionIndex($tipos){
                                 $accounting_seats_details->cost_center_id = 1;
                                 $accounting_seats_details->status = true;
                                 $accounting_seats_details->save();
+                                if($_SESSION['codeimp']){
+                                    $sum=0;
+                                    foreach ($_SESSION['codeimp'] as $key => $value) {
+                                          $sum += $value;
+                                    }
+                                    $accounting_seats = new AccountingSeats;
+                                    $h = rand(1, 100000000000);
+                                    $ch1 = Providers::findOne(['person_id' => $model->id_personas]);
+                                    $accou_c = $ch1->paid_chart_account_id;
+                                    $ins = $person::findOne(['id' => $model->id_personas]);
+                                    $descripcion = $facturafin->description;
+                                    $nodeductible = False;
+                                    $status = True;
+                                    $accounting_seats->head_fact = $model->n_documentos;
+                                    $accounting_seats->id = $h;
+                                    $accounting_seats->institution_id = $_SESSION['id_ins']->id;
+                                    $accounting_seats->description = $descripcion;
+                                    $accounting_seats->nodeductible = $nodeductible;
+                                    $accounting_seats->status = $status;
+                                    $accounting_seats->type = "retencion";
+                                    if($accounting_seats->save()){
+                                        $accounting_seats_details = new AccountingSeatsDetails;
+                                        $accounting_seats_details->accounting_seat_id = $accounting_seats->id;
+                                        $accounting_seats_details->chart_account_id = 13234;
+                                        $accounting_seats_details->debit = $sum;
+                                        $accounting_seats_details->credit = 0;
+                                        $accounting_seats_details->cost_center_id = 1;
+                                        $accounting_seats_details->status = true;
+                                        $accounting_seats_details->save();
+                                        foreach($_SESSION['codeimp'] as $key => $value){
+                                            $accounting_seats_details = new AccountingSeatsDetails;
+                                            $accounting_seats_details->accounting_seat_id = $accounting_seats->id;
+                                            $accounting_seats_details->chart_account_id = $key;
+                                            $accounting_seats_details->debit = 0;
+                                            $accounting_seats_details->credit = $value;
+                                            $accounting_seats_details->cost_center_id = 1;
+                                            $accounting_seats_details->status = true;
+                                            $accounting_seats_details->save();
+                                        }
+                                    }
+                                }
                                 return $this->redirect('viewf?id='.$model->n_documentos);
-
-                            }
+}
 else{
     $fac=FacturaBody::find()->where(["id_head"=>$model->n_documentos])->exists();
     if($fac){
@@ -423,18 +471,64 @@ else{
 
 
 
+        if ($persona && $salesman) {
             return $this->render('factura', [
-               'salesman'=>$salesman, 'model' => $model, "ven" => $persona, "model2" => $model2, "produc" => $pro, "precio" => $precio,"query"=>$query, 'model3' => $facturafin,'modeltype'=>$model_tipo,'produ'=>$productos,"providers"=>$providers
+               'retention'=>$retention,'retiva' => $retiva, 'retimp' => $retimp, 'salesman' => $salesman, 'model' => $model, "ven" => $persona, "model2" => $model2, "produc" => $pro, "precio" => $precio, "query" => $query, 'model3' => $facturafin, 'modeltype' => $model_tipo, 'produ' => $productos, "providers" => $providers
 
             ]);
         }
+        return $this->renderContent("<h1>No se ha encontrado clientes o vendedores para la facturacion</h1>");
+        }
+        public function actionMatrixial($id,$ischair){
+            $modelhead=New HeadFact;
+            $modelbody=New FacturaBody;
+            $modelfin=New Facturafin;
+            $persona=New Person;
+
+
+            $id=$_GET["id"];
+            $model1=$modelhead::findOne(["n_documentos"=>$id]);
+            $model2=$modelbody::find()->where(["id_head"=>$id])->all();
+            $model3=$modelfin::findOne(["id_head"=>$id]);
+            $persona=$persona::findOne(["id"=>$model1->id_personas]);
+
+            $content = $this->renderPartial('matricial', [
+                'model' => $model1,"model2"=>$model2,"modelfin"=>$model3,"personam"=>$persona
+
+            ]);
+            $css='
+            .fin{
+           padding:5px;
+            }
+            ';
+            $pdf = new \kartik\mpdf\Pdf([
+                'mode' => \kartik\mpdf\Pdf::MODE_UTF8, // leaner size using standard fonts
+                'format' => [210,148],
+                'content' => $content,
+                'marginTop' => 25,
+                'marginBottom' => 10,
+                'marginLeft' => 10,
+                'marginRight' => 10,
+                'cssFile' => '@vendor/kartik-v/yii2-mpdf/src/assets/kv-mpdf-bootstrap.min.css',
+                'cssInline' => $css,
+                'options' => [
+                    'title' => 'Factuur',
+                    'subject' => 'Generating PDF files via yii2-mpdf extension has never been easy',
+                ],
+            ]);
+            return $pdf->render();
+
+
+
+        }
+
 public function actionGetdata($data){
     $model=New Providers;
     $model2=New Clients;
     $model3=New Person;
 if ($data=="Proveedor"){
     $model2::find()->all();
-    $c=$model3::find()->innerJoin('providers',"person.id=providers.person_id")->all();
+    $c=$model3::find()->innerJoin('providers',"person.id=providers.person_id")->where(["person.institution_id"=>$_SESSION['id_ins']->id])->all();
     foreach($c as $co){
         echo "<option value='$co->id'>$co->name</option>";
     }
@@ -442,18 +536,26 @@ if ($data=="Proveedor"){
 else{
     if ($data=="Cliente"){
         $model2::find()->all();
-        $c=$model3::find()->innerJoin('clients',"person.id=clients.person_id")->all();
+        $c=$model3::find()->innerJoin('clients',"person.id=clients.id_personas")->where(["person.institution_id"=>$_SESSION['id_ins']->id])->all();
         foreach($c as $co){
             echo "<option value='$co->id'>$co->name</option>";
         }
     }
 }
 }
+    public function actionGetretention()
+    {
+        if(Yii::$app->request->isAjax){
+            $data=Yii::$app->request->post();
+            $datos=Retention::findOne([$data["single"]]);
+            return(\yii\helpers\Json::encode($datos));
+        }
+    }
     public function actionBuscarf($fil,$per,$tipo)
     {
 
 
-        $model2 = HeadFact::find()->andFilterWhere(['like', 'n_documentos', $fil . '%', false])->andFilterWhere(['id_personas' => $per])->andFilterWhere(['tipo_de_documento' => $tipo])->all();
+        $model2 = HeadFact::find()->innerjoin("person","person.id=head_fact.id_personas")->andFilterWhere(['like', 'head_fact.n_documentos', $fil . '%', false])->andFilterWhere(['head_fact.id_personas' => $per])->andFilterWhere(['head_fact.tipo_de_documento' => $tipo])->andFilterWhere(['person.institution_id' =>  $_SESSION['id_ins']->id])->all();
         yii::debug($model2);
 
 
@@ -617,7 +719,12 @@ echo "</td>";
             $preciou=$data['preciou'];
             $precioto=$data['precioto'];
             $id_head=$data['ndocumento'];
-            yii::debug($id_head);
+            $retimp=$data['retimp'];
+            $retiva=$data['retinv'];
+            $nre=$data['nret'];
+            $autorite=$data['autorite'];
+
+            $_SESSION['codeimp']=\yii\helpers\Json::decode($data['codeimp']);
             $i=count($cantidad);
             for($k=0;$k<$i;$k++){
                 $id_product=New Product;
@@ -628,6 +735,10 @@ echo "</td>";
                 $facbody->precio_total=$precioto[$k];
                 $facbody->id_producto=$i_pro->id;
                 $facbody->id_head=$id_head;
+                $facbody->retencion_imp=$retimp[$k];
+                $facbody->retencion_iva=$retiva[$k];
+                $facbody->n_de_retencion=$nre;
+                $facbody->autorizacion=$autorite;
                 $facbody->save();
             }
 
@@ -902,7 +1013,8 @@ echo "</td>";
                                     $accounting_seats_details->cost_center_id = 1;
                                     $accounting_seats_details->status = true;
                                     $accounting_seats_details->save();
-                                } else {
+                                }
+                                else {
                                     $accounting_seats_details = new AccountingSeatsDetails;
                                     $accounting_seats_details->accounting_seat_id = $f;
                                     $accounting_seats_details->chart_account_id = $haber[$k - 1];
@@ -955,7 +1067,7 @@ echo "</td>";
                                 $gr = rand(1, 100090000);
                                 $accounting_sea->head_fact = $model->n_documentos;
                                 $accounting_sea->id = $gr;
-                                $accounting_sea->institution_id = 1;
+                                $accounting_sea->institution_id = $_SESSION['id_ins']->id;
                                 $accounting_sea->description = "inventario";
                                 $accounting_sea->nodeductible = true;
                                 $accounting_sea->type = "inventario";
@@ -997,7 +1109,7 @@ echo "</td>";
                                 $gr = rand(1, 100090000);
                                 $accounting_sea->head_fact = $model->n_documentos;
                                 $accounting_sea->id = $gr;
-                                $accounting_sea->institution_id = 1;
+                                $accounting_sea->institution_id = $_SESSION['id_ins']->id;
                                 $accounting_sea->description = "fact2";
                                 $accounting_sea->nodeductible = true;
                                 $accounting_sea->status = true;

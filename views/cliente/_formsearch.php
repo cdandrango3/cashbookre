@@ -1,6 +1,7 @@
 <?php
 
 use app\models\HeadFact;
+use app\models\Institution;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -9,8 +10,9 @@ use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $modelhead app\models\FacturaHead*/
 /* @var $form yii\widgets\ActiveForm */
+$_SESSION['id_ins'] = Institution::findOne(['users_id'=>Yii::$app->user->identity->id]);
 $person=ArrayHelper::map(\app\models\Person::find()
-    ->asArray()->all(),'id', 'name');
+    ->where(["institution_id"=>$_SESSION['id_ins']->id])->asArray()->all(),'id', 'name');
 $dat=ArrayHelper::map(HeadFact::find()->all(), 'tipo_de_documento', 'tipo_de_documento');
 ?>
 <div class="container">

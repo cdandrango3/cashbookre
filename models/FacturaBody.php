@@ -13,6 +13,10 @@ use Yii;
  * @property float|null $precio_total
  * @property int|null $id_producto
  * @property string $id_head
+ * @property int|null $retencion_imp
+ * @property int|null $retencion_iva
+ * @property int|null $autorizacion
+ * @property string|null $n_de_retencion
  *
  * @property Product $producto
  */
@@ -32,11 +36,11 @@ class FacturaBody extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['cant', 'id_producto'], 'default', 'value' => null],
-            [['cant', 'id_producto'], 'integer'],
+            [['cant', 'id_producto', 'retencion_imp', 'retencion_iva', 'autorizacion'], 'default', 'value' => null],
+            [['cant', 'id_producto', 'retencion_imp', 'retencion_iva', 'autorizacion'], 'integer'],
             [['precio_u', 'precio_total'], 'number'],
             [['id_head'], 'required'],
-            [['id_head'], 'string'],
+            [['id_head', 'n_de_retencion'], 'string'],
             [['id_producto'], 'exist', 'skipOnError' => true, 'targetClass' => Product::className(), 'targetAttribute' => ['id_producto' => 'id']],
         ];
     }
@@ -53,6 +57,10 @@ class FacturaBody extends \yii\db\ActiveRecord
             'precio_total' => 'Precio Total',
             'id_producto' => 'Id Producto',
             'id_head' => 'Id Head',
+            'retencion_imp' => 'Retencion Imp',
+            'retencion_iva' => 'Retencion Iva',
+            'autorizacion' => 'Autorizacion',
+            'n_de_retencion' => 'N De Retencion',
         ];
     }
 

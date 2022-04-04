@@ -1,4 +1,6 @@
 <?php
+
+use app\models\Institution;
 use yii\helpers\Url;
 
 return [
@@ -24,8 +26,10 @@ return [
         'attribute' => 'chart_account_id',
         'label'=>'Cuenta Contable Bancaria',
         'value' => function ($data){
-           $var=\app\models\ChartAccountsSearch::findOne(["id" => $data->chart_account_id]);
-            return $var->slug ;
+            $id_ins=Institution::findOne(['users_id'=>Yii::$app->user->identity->id]);
+           $var=\app\models\ChartAccountsSearch::find()->where(["id" => $data->chart_account_id])->andwhere(["institution_id" => $id_ins->id])->one();
+            yii::debug($var);
+           return $var->slug ;
         }
     ],
     [

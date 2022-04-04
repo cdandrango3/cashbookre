@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Institution;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use app\models\ChartAccounts;
@@ -11,8 +12,8 @@ use kartik\date\DatePicker;
 /* @var $this yii\web\View */
 /* @var $model app\models\AccountingSeatsSearch */
 /* @var $form yii\widgets\ActiveForm */
-
-$accountdata = ArrayHelper::map(ChartAccounts::find()->Select(["id,concat(code,' ',slug) as name"])->Where(['institution_id' => $model->institution_id])->orderBy('code,parent_id')->asArray()->all(), 'id', 'name');
+$_SESSION['id_ins'] = Institution::findOne(['users_id'=>Yii::$app->user->identity->id]);
+$accountdata = ArrayHelper::map(ChartAccounts::find()->Select(["id,concat(code,' ',slug) as name"])->Where(['institution_id' => $_SESSION['id_ins']->id])->orderBy('code,parent_id')->asArray()->all(), 'id', 'name');
 $costcenterdata = ArrayHelper::map(CostCenter::find()->Select(["id","name"])->Where(['institution_id' => $model->institution_id])->orderBy('name')->asArray()->all(), 'id', 'name');
 ?>
 

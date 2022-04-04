@@ -51,7 +51,7 @@ class SiteController extends Controller
             if($passv){
                 if($user->password != $user->passrea){
                     Yii::debug("aqui estoy");
-                    Yii::$app->session->addFlash("error", "Las contraseñas anterior no coincide");
+                    Yii::$app->session->addFlash("error", "Las contraseñas no coincide");
                     $url = $_SERVER['HTTP_REFERER'];
                     return $this->redirect($url);
                 }
@@ -62,7 +62,7 @@ class SiteController extends Controller
 
             }
             else{
-                Yii::$app->session->addFlash("error", "Escribio mal su conraseña vuelva a intentarlo");
+                Yii::$app->session->addFlash("error", "Escribio mal su contraseña anterior vuelva a intentarlo");
 
             }
 

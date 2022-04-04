@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Institution;
 use Yii;
 use app\models\Person;
 use app\models\PersonSearch;
@@ -112,7 +113,8 @@ class PersonController extends Controller
     {
         $request = Yii::$app->request;
         $model = new Person();
-        $model->institution_id = $id;
+        $institutions=Institution::findOne(['users_id'=>Yii::$app->user->identity->id]);
+        $model->institution_id = $institutions->id;
         $client = new Clients;
         $provider = new Providers;
         $employee = new Employee;

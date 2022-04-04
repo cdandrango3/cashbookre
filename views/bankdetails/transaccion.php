@@ -17,16 +17,18 @@
     <tbody id="ui">
     <?php
 
+    use app\models\Institution;
     use yii\helpers\Html;
     use yii\helpers\Url;
 
-
+    $id_ins=Institution::findOne(['users_id'=>Yii::$app->user->identity->id]);
     foreach($transaccion as $tran):?>
         <?php
+
         $tipo=\app\models\Charges::findOne($tran->id_charge);
         $person=\app\models\Person::findOne($tipo->person_id);
 
-        $chart=\app\models\ChartAccounts::findOne($tran->chart_account);
+        $chart=\app\models\ChartAccounts::find()->where(["id"=>$tran->chart_account])->andWhere(["institution_id"=>$id_ins->id])->one();
         yii::debug($chart)
         ?>
     <tr>

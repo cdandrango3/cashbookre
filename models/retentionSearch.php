@@ -2,15 +2,14 @@
 
 namespace app\models;
 
-use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\BankDetails;
+use app\models\Retention;
 
 /**
- * BankdetailsSearch represents the model behind the search form of `app\models\BankDetails`.
+ * retentionSearch represents the model behind the search form of `app\models\Retention`.
  */
-class BankdetailsSearch extends BankDetails
+class retentionSearch extends Retention
 {
     /**
      * {@inheritdoc}
@@ -18,10 +17,9 @@ class BankdetailsSearch extends BankDetails
     public function rules()
     {
         return [
-            [['id', 'number_account', 'chart_account_id', 'bank_type_id'], 'integer'],
-            [['city_id'], 'safe'],
-            [['status'], 'boolean'],
-            [['name'], 'string'],
+            [['id', 'id_chart', 'id_charting', 'type'], 'integer'],
+            [['percentage'], 'number'],
+            [['codesri', 'slug'], 'safe'],
         ];
     }
 
@@ -43,8 +41,7 @@ class BankdetailsSearch extends BankDetails
      */
     public function search($params)
     {
-        $id_ins=Institution::findOne(['users_id'=>Yii::$app->user->identity->id]);
-        $query = BankDetails::find()->innerJoin("chart_accounts","chart_accounts.id=bank_details.chart_account_id")->where(["institution_id"=>$id_ins->id]);
+        $query = Retention::find();
 
         // add conditions that should always apply here
 
@@ -63,14 +60,14 @@ class BankdetailsSearch extends BankDetails
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'name' => $this->name,
-            'number_account' => $this->number_account,
-            'chart_account_id' => $this->chart_account_id,
-            'status' => $this->status,
-            'bank_type_id' => $this->bank_type_id,
+            'id_chart' => $this->id_chart,
+            'percentage' => $this->percentage,
+            'id_charting' => $this->id_charting,
+            'type' => $this->type,
         ]);
 
-        $query->andFilterWhere(['ilike', 'city_id', $this->city_id]);
+        $query->andFilterWhere(['ilike', 'codesri', $this->codesri])
+            ->andFilterWhere(['ilike', 'slug', $this->slug]);
 
         return $dataProvider;
     }

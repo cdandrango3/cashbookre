@@ -14,7 +14,9 @@ use Yii;
  * @property string|null $date
  * @property string|null $Description
  * @property string|null $type_charge
+ * @property int $institution_id
  *
+ * @property HeadFact $nDocument
  * @property Person $person
  */
 class Charges extends \yii\db\ActiveRecord
@@ -33,14 +35,12 @@ class Charges extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id'], 'required'],
-            [['id', 'person_id'], 'default', 'value' => null],
-            [['id', 'person_id'], 'integer'],
+            [['person_id'], 'default', 'value' => null],
+            [['person_id'], 'integer'],
             [['status'], 'boolean'],
             [['n_document', 'Description', 'type_charge'], 'string'],
             [['date'], 'safe'],
-            [['n_document'], 'unique'],
-            [['id'], 'unique'],
+            [['n_document'], 'exist', 'skipOnError' => true, 'targetClass' => HeadFact::className(), 'targetAttribute' => ['n_document' => 'n_documentos']],
             [['person_id'], 'exist', 'skipOnError' => true, 'targetClass' => Person::className(), 'targetAttribute' => ['person_id' => 'id']],
         ];
     }
@@ -58,7 +58,18 @@ class Charges extends \yii\db\ActiveRecord
             'date' => 'Date',
             'Description' => 'Description',
             'type_charge' => 'Type Charge',
+            'institution_id' => 'Institution ID',
         ];
+    }
+
+    /**
+     * Gets query for [[NDocument]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getNDocument()
+    {
+        return $this->hasOne(HeadFact::className(), ['n_documentos' => 'n_document']);
     }
 
     /**

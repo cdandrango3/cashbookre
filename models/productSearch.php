@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\Product;
@@ -42,7 +43,8 @@ class productSearch extends Product
      */
     public function search($params)
     {
-        $query = Product::find();
+        $id_ins=Institution::findOne(['users_id'=>Yii::$app->user->identity->id]);
+        $query = Product::find()->where(["institution_id"=>$id_ins->id]);
 
         // add conditions that should always apply here
 

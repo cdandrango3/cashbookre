@@ -1,12 +1,15 @@
 <?php
 
 namespace app\models;
-
+use app\models\Person;
+use app\models\Users;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Person;
-
+use yii\web\User;
+use app\models\LoginForm;
+use yii\web\Controller;
+use yii\db\Query;
 /**
  * PersonSearch represents the model behind the search form about `app\models\Person`.
  */
@@ -42,7 +45,24 @@ class PersonSearch extends Person
      */
     public function search($params)
     {
-        $query = Person::find();
+
+        $query1 = new Query;
+        $users = array();
+        $usersstr = "";
+        $us=Users::findOne(["username"=>Yii::$app->user->identity->username]);
+
+        $usuarios = $query1->select(['institution_id'])->from('users, person')->Where('person.id = person_id')->all();
+        if ($usuarios) {
+            foreach ($usuarios as $row)
+            {
+                $users = $row['institution_id'];
+                $usersstr = $users.",".$usersstr;
+            }
+        }
+        $modulos = explode(",", $usersstr);
+        yii::debug($modulos);
+        $institutions=Institution::findOne(['users_id'=>Yii::$app->user->identity->id]);
+        $query = Person::find()->andFilterWhere(['institution_id'=>$institutions->id]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -57,7 +77,7 @@ class PersonSearch extends Person
         }
         $query->alias('t');
         //file_put_contents('c:/temp/php.log',json_encode($this->rol)."\n\r",FILE_APPEND);
-        if ($this->rol) { 
+        if ($this->rol) {
             if (array_search('provider',$this->rol)!==false) {
                 $query->innerJoin('providers', 'providers.person_id=t.id');
             }

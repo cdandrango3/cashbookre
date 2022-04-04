@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Institution;
 use Yii;
 use app\models\ChartAccounts;
 use app\models\ChartAccountsSearch;
@@ -95,11 +96,13 @@ class ChartaccountsController extends Controller
      */
     public function actionCreate($id = 0)
     {
-        if ($id) $parentModel = $this->findModel($id);
+        $id_ins=Institution::findOne(['users_id'=>Yii::$app->user->identity->id]);
+        $code=ChartAccounts::findOne($id);
+        if ($code->id) $parentModel = $this->findModel($id);
         $request = Yii::$app->request;
         $model = new ChartAccounts();
-        $model->institution_id = 1;
-        $model->parent_id = $id;
+        $model->institution_id = $id_ins->id;
+        $model->parent_id = $code->id;
         //consecutivo
         $lastModels = ChartAccounts::find()->where(['parent_id' => $id, 'institution_id' => $model->institution_id])->orderBy('code DESC')->all();
 
@@ -148,7 +151,6 @@ class ChartaccountsController extends Controller
                     ]),
                     'footer' => Html::button('Cerrar', ['class' => 'btn btn-default pull-left', 'data-dismiss' => "modal"]) .
                         Html::button('Guardar', ['class' => 'btn btn-primary', 'type' => "submit"])
-
                 ];
             }
         } else {

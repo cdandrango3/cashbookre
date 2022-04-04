@@ -1,13 +1,17 @@
 <?php
 
 use app\models\AccountingSeatsDetails;
+use app\models\FacturaBody;
 use app\models\Person;
 use app\models\Product;
+use app\models\Retention;
 use yii\helpers\Html;
 $producto=New Product;
 $get=$_GET["ischair"];
 yii::debug($get);
-$sale=Person::findOne(["id"=>$model->id_saleman])
+$sale=Person::findOne(["id"=>$model->id_saleman]);
+$isret=FacturaBody::find()->where(["id_head"=>$model->n_documentos])->andWhere('retencion_imp IS NOT NULL OR retencion_iva IS NOT NULL')->exists();
+$ret=FacturaBody::find()->where(["id_head"=>$model->n_documentos])->one()
 
 ?>
 <table border="0" cellpadding="0" cellspacing="0" style="width:100%;font-family: Arial;font-size:9pt">
@@ -17,7 +21,7 @@ $sale=Person::findOne(["id"=>$model->id_saleman])
             <div><h4><?=$personam->commercial_name?></h4></div></td>
         </td>
         <td>
-            <div align="right"> &nbsp;&nbsp; &nbsp;&nbsp;<?= $model->tipo_de_documento ?></div></td>
+            <div align="right"> <?= $model->tipo_de_documento ?></div></td>
 
 
     </tr>
@@ -34,6 +38,9 @@ $sale=Person::findOne(["id"=>$model->id_saleman])
 </table>
 <br>
 <br>
+<div>
+
+</div>
 <h4><div align="center">Comprobante de Compra/Ventas</div></h4>
 <br>
 <table border="0" cellpadding="0" cellspacing="0" style="width:100%;font-family: Arial;font-size:9pt">
@@ -89,10 +96,66 @@ $sale=Person::findOne(["id"=>$model->id_saleman])
 
                     </tr>
                 <?php endforeach ?>
+
                 </tbody>
 
             </table>
+    <br>
+    <br>
+<?php if($isret):?>
+<div style="text-align:center;font-family: Arial"><h4>Retencion</h4></div>
+    <h5><strong>N de documento </strong><?=($ret->n_de_retencion)?:""?></h5>
+    <br>
+    <table border="1" cellpadding="4" cellspacing="0" style="width:100%;font-family: Arial;font-size:9pt">
+        <thead>
+        <tr>
+            <th>Retencion</th>
+            <th> Tipo</th>
+            <th> Base</th>
+            <th> %</th>
+            <th> Total</th>
+        </tr>
+        <?php foreach($model2 as $mbody): ?>
+        <?php if(!is_null($mbody->retencion_imp)):?>
+                <?php
+                $retencion=Retention::findOne($mbody->retencion_imp);
+                $tipo="Impuesto";
+                $codesri=$retencion->codesri." ".$retencion->slug;
+                $base=$mbody->precio_total;
+                $porcentaje=$retencion->percentage;
+                $total=$base*$porcentaje/100;
+                ?>
+                <tr>
+                    <td><?=$codesri?></td>
+                    <td><?=$tipo?></td>
+                    <td><?=$base?></td>
+                    <td><?=$porcentaje?></td>
+                    <td><?=$total?></td>
+                </tr>
+            <?php endif?>
+        <?php if(!is_null($mbody->retencion_iva)):?>
+                <?php
+                $retencion=Retention::findOne($mbody->retencion_iva);
+                $tipo="Iva";
+                $codesri=$retencion->codesri." ".$retencion->slug;
+                $base=($mbody->precio_total*12)/100;
+                $porcentaje=$retencion->percentage;
+                $total=$base*$porcentaje/100;
+                ?>
+                <tr>
+                    <td><?=$codesri?></td>
+                    <td><?=$tipo?></td>
+                    <td><?=$base?></td>
+                    <td><?=$porcentaje?></td>
+                    <td><?=$total?></td>
+                </tr>
+            <?php endif?>
+        <?php endforeach ?>
+        </thead>
 
+    </table>
+
+<?php endif?>
 
 </div>
 <div class="col-3">
@@ -200,7 +263,11 @@ $sale=Person::findOne(["id"=>$model->id_saleman])
 
     <tr>
         <td>
-            <strong>Subtotal:   </strong> </td> <td> <div class="su"><?=$modelfin->subtotal12?></td>
+            <strong>Subtotal 12 %:   </strong> </td> <td> <div class="su"><?=$modelfin->subtotal12?></td>
+    </tr>
+    <tr>
+        <td>
+            <strong>Subtotal 0%:   </strong> </td> <td> <div class="su"><?=$modelfin->subtotal0?:0 ?> </td>
     </tr>
     <tr>
         <td><strong>Iva: </strong> </td> <td> <div class="su"> <?=$modelfin->iva ?></td></div>

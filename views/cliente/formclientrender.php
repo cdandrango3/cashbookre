@@ -2,6 +2,7 @@
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+
 $listData=ArrayHelper::map($model,"ruc","ruc");
 ?>
 <?php
