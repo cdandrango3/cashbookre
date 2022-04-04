@@ -13,6 +13,7 @@ use yii\widgets\Pjax;
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\ChartAccountsSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
+error_reporting(E_ALL ^ E_DEPRECATED);
 $this->registerJsFile('@web/js/chartaccounts/index.js?v='.time(), ['depends' => \yii\web\JqueryAsset::className()]);
 
 $this->title = 'Plan de Cuentas';
