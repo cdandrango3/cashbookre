@@ -2,9 +2,9 @@
 /**/
 return [
   'class' => 'yii\db\Connection',
-    'dsn' => 'pgsql:host=ec2-3-225-41-234.compute-1.amazonaws.com;dbname=dc0vok92tb7gfr',
-    'username' => 'buqgklffygwnks',
-    'password' => 'beb10a5f981495b08fc99ec2ae09fc037cae9e7ed6a65f56872e8ffc9941687b',
+    'dsn' => 'pgsql:host=ec2-54-157-79-121.compute-1.amazonaws.com;dbname=dfn3m087fsipl',
+    'username' => 'rwrphelswemffi',
+    'password' => '434801de2d2ed6e93f7674f6b2d68d4f8e7e2820851db7aa2cb97069ae9f2ae4',
     'charset' => 'utf8',
 
 
