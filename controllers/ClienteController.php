@@ -34,7 +34,10 @@ class ClienteController extends controller
     public $id;
     public $id_product;
     public $id_ins=0;
+    public $var43;
+
 public function actionIndex($tipos){
+    $session = Yii::$app->session;
     $models=New clients;
     $modelhead=New HeadFact;
     $modelf=New Facturafin;
@@ -372,9 +375,9 @@ public function actionIndex($tipos){
                                 $accounting_seats_details->cost_center_id = 1;
                                 $accounting_seats_details->status = true;
                                 $accounting_seats_details->save();
-                                if($_SESSION['codeimp']){
+                                if($this->var43){
                                     $sum=0;
-                                    foreach ($_SESSION['codeimp'] as $key => $value) {
+                                    foreach ($this->var43 as $key => $value) {
                                           $sum += $value;
                                     }
                                     $accounting_seats = new AccountingSeats;
@@ -401,7 +404,7 @@ public function actionIndex($tipos){
                                         $accounting_seats_details->cost_center_id = 1;
                                         $accounting_seats_details->status = true;
                                         $accounting_seats_details->save();
-                                        foreach($_SESSION['codeimp'] as $key => $value){
+                                        foreach($this->var43 as $key => $value){
                                             $accounting_seats_details = new AccountingSeatsDetails;
                                             $accounting_seats_details->accounting_seat_id = $accounting_seats->id;
                                             $accounting_seats_details->chart_account_id = $key;
@@ -725,8 +728,7 @@ echo "</td>";
             $retiva=$data['retinv'];
             $nre=$data['nret'];
             $autorite=$data['autorite'];
-
-            $_SESSION['codeimp']=\yii\helpers\Json::decode($data['codeimp']);
+            $this->var43=\yii\helpers\Json::decode($data['codeimp']);
             $i=count($cantidad);
             for($k=0;$k<$i;$k++){
                 $id_product=New Product;
