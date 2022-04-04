@@ -524,6 +524,7 @@ else{
         }
 
 public function actionGetdata($data){
+    $_SESSION['id_ins'] = Institution::findOne(['users_id'=>Yii::$app->user->identity->id]);
     $model=New Providers;
     $model2=New Clients;
     $model3=New Person;
