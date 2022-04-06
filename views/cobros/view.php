@@ -31,7 +31,7 @@
         yii::debug($chart)
         ?>
         <tr>
-            <td><?= Yii::$app->formatter->asDate($tran->date,'yyyy-MM-DD') ?></td>
+            <td><?= Yii::$app->formatter->asDate($tran->date,'yyyy-MM-dd') ?></td>
             <td><?= HTML::a($tran->comprobante,Url::to(["detail", "id"=>$tran->serial])) ?> </td>
             <td><?= $person->name ?></td>
             <td><?= $tipo->type_charge ?></td>
