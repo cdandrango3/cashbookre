@@ -49,7 +49,7 @@ $js=<<< JS
         c=$(this).val();
         $.ajax({
         method: "POST",
-            url: 'getdata?get='+c,
+            url: 'web/getdata?get='+c,
             success: function(data) {
             console.log(data)
                  $('#ui').html(data)   
@@ -61,7 +61,7 @@ $('#personas').change(function(){
         console.log(c)
         $.ajax({
         method: "POST",
-            url: 'getper?ge='+c,
+            url: 'web/getper?get='+c,
             success: function(data) {
             console.log(data)
                  $('#ui').html(data)   

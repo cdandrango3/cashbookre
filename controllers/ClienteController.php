@@ -561,7 +561,7 @@ else{
     public function actionBuscarf($fil,$per,$tipo)
     {
 
-
+        $_SESSION['id_ins'] = Institution::findOne(['users_id'=>Yii::$app->user->identity->id]);
         $model2 = HeadFact::find()->innerjoin("person","person.id=head_fact.id_personas")->andFilterWhere(['like', 'head_fact.n_documentos', $fil . '%', false])->andFilterWhere(['head_fact.id_personas' => $per])->andFilterWhere(['head_fact.tipo_de_documento' => $tipo])->andFilterWhere(['person.institution_id' =>  $_SESSION['id_ins']->id])->all();
         yii::debug($model2);
 
