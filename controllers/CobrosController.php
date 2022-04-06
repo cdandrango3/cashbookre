@@ -195,7 +195,7 @@ class CobrosController extends Controller
             $chart=\app\models\ChartAccounts::find()->where(["id"=>$mo->chart_account])->andwhere(["institution_id"=>1])->one();
             yii::debug($mo->chart_account);
             echo '<tr>'.'<td>'.$mo->date.'</td>'.
-                '<td>'. HTML::a($mo->comprobante,Url::to(["detail", "id"=>$mo->comprobante])).'</td>'.
+                '<td>'. HTML::a($mo->comprobante,Url::to(["detail", "id"=>$mo->serial])).'</td>'.
                 '<td>'.$person->name.'</td>'.
                 '<td>'. $tipo->type_charge.'</td>'.
 
@@ -216,7 +216,7 @@ class CobrosController extends Controller
                 $chart = \app\models\ChartAccounts::find()->where(["id"=>$mo->chart_account])->andwhere(["institution_id"=>1])->one();
 
                 echo '<tr>' . '<td>' . $n->date . '</td>' .
-                    '<td>' . HTML::a($n->comprobante, Url::to(["detail", "id" => $n->comprobante])) . '</td>' .
+                    '<td>' . HTML::a($n->comprobante, Url::to(["detail", "id" => $n->serial])) . '</td>' .
                     '<td>' . $per->name . '</td>' .
                     '<td>' . $mo->type_charge . '</td>' .
 
