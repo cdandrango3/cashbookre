@@ -398,7 +398,14 @@ $query = new yii\db\Query();
                                 <a href="<?= Url::to(['cliente/index?tipos=Proveedor']) ?>" class="nav-link">
                                     <p>Compra</p>
                                 </a>
-                            </li>
+
+                   </li>
+                    <li class="nav-item">
+                        <a href="<?= Url::to(['/cobros/view']) ?>" class="nav-link">
+                            <p>Cobros/Pagos</p>
+                        </a>
+
+                    </li>
                 </ul>
             </li>
 			 <?php } } ?>
