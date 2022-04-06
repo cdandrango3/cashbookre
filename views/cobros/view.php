@@ -61,7 +61,7 @@ $('#personas').change(function(){
         console.log(c)
         $.ajax({
         method: "POST",
-            url: '/web/cobros/getper?get='+c,
+            url: '/web/cobros/getper?ge='+c,
             success: function(data) {
             console.log(data)
                  $('#ui').html(data)   
