@@ -39,7 +39,7 @@ $char=ChartAccounts::findOne(["id"=>$transaccion->chart_account]);
                 Tipo de transaccion :   <?=$model2->type_charge?>
             </div>
             <div>
-                Fecha de emisión :   <?=$transaccion->date?>
+                Fecha de emisión :   <?=Yii::$app->formatter->asDate($transaccion->date,'yyyy-MM-dd')?>
             </div>
             <div>
                 Persona :   <?=$person->name?>
@@ -78,7 +78,7 @@ $char=ChartAccounts::findOne(["id"=>$transaccion->chart_account]);
                 <tbody>
                 <tr>
                     <td><?= HTML::a($model2->n_document,Url::to(["/cliente/viewf","id"=>$model2->n_document]))?></td>
-                    <td><?= $transaccion->date?></td>
+                    <td><?= Yii::$app->formatter->asDate($transaccion->date,'yyyy-MM-dd')?></td>
                     <td>Factura</td>
                     <td><?= $transaccion->balance?></td>
                     <td><?= $transaccion->saldo?></td>
