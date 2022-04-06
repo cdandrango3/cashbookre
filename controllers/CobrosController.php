@@ -148,7 +148,7 @@ class CobrosController extends Controller
     }
     public function actionView(){
         $id_ins=Institution::findOne(['users_id'=>Yii::$app->user->identity->id]);
-        $model=ChargesDetail::find()->innerJoin("charges","charges_detail.id_charge=charges.id")->innerJoin("person","charges.person_id=person.id")->where(["person.institution_id"=>$id_ins->id])->all();
+        $model=ChargesDetail::find()->innerJoin("charges","charges_detail.id_charge=charges.id")->innerJoin("person","charges.person_id=person.id")->where(["person.institution_id"=>$id_ins->id])->orderBy(["date"=>SORT_ASC])->all();
         $model2=New Charges;
         return $this->render('view', [
             'transaccion'=>$model,"model"=>$model2

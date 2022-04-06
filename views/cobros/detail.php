@@ -39,7 +39,7 @@ $char=ChartAccounts::findOne(["id"=>$transaccion->chart_account]);
                 Tipo de transaccion :   <?=$model2->type_charge?>
             </div>
             <div>
-                Fecha de emisión :   <?=$model2->date?>
+                Fecha de emisión :   <?=$transaccion->date?>
             </div>
             <div>
                 Persona :   <?=$person->name?>
@@ -78,7 +78,7 @@ $char=ChartAccounts::findOne(["id"=>$transaccion->chart_account]);
                 <tbody>
                 <tr>
                     <td><?= HTML::a($model2->n_document,Url::to(["/cliente/viewf","id"=>$model2->n_document]))?></td>
-                    <td><?= $model2->date?></td>
+                    <td><?= $transaccion->date?></td>
                     <td>Factura</td>
                     <td><?= $transaccion->balance?></td>
                     <td><?= $transaccion->saldo?></td>
