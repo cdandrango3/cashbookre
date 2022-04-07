@@ -17,7 +17,7 @@ $get=$_GET["ischair"];
     </tr>
     <tr>
         <td> Yaruqui Barrio la victoria</td>
-        <td style="padding-left: 210px"> <?=$personam->phone?> </td>
+        <td style="padding-left: 210px"> <?=$personam->phones?> </td>
     </tr>
 </table>
 
