@@ -51,7 +51,7 @@ $char=ChartAccounts::findOne(["id"=>$transaccion->chart_account]);
                 Total :   <?=$transaccion->amount?> $
             </div>
             <div>
-                Descripcion :   <?=$model2->Description?> $
+                Descripcion :   <?=$model2->Description?>
             </div>
         </div>
     </div>

@@ -11,7 +11,7 @@ use \derekisbusy\popper\PopperAsset;
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\AccountingSeatsSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
-
+error_reporting(E_ALL ^ E_DEPRECATED);
 $this->title = 'Libro Mayor';
 $this->params['breadcrumbs'][] = $this->title;
 
