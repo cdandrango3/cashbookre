@@ -144,12 +144,9 @@ $ifex=\app\models\ChargesDetail::find()->where(["id_asiento"=>$modelo->id])->exi
 
         <tr>
             <td class="fin">
-                 <?=$modelfin->subtotal12?> </td>
+                 <?=$modelfin->subtotal12?:0 + $modelfin->subtotal0?:0 ?> </td>
             </tr>
-        <tr>
-            <td class="fin">
-                <?=$modelfin->subtotal0?:0?> </td>
-        </tr>
+
         <tr>
             <td class="fin">
                 <?=$modelfin->iva?> </td>
