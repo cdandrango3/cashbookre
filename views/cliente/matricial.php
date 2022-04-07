@@ -13,11 +13,11 @@ $get=$_GET["ischair"];
         <td>Quito &nbsp; <?=  Yii::$app->formatter->asDatetime($model->f_timestamp,"yyyy-MM-dd")?></td>
     <tr>
         <td><?=$personam->name?></td>
-        <td style="padding-left: 210px">0387487328738487</td>
+        <td style="padding-left: 210px"><?=$personam->cedula?></td>
     </tr>
     <tr>
         <td> Yaruqui Barrio la victoria</td>
-        <td style="padding-left: 210px"> 0387487328738487 </td>
+        <td style="padding-left: 210px"> <?=$personam->phone?> </td>
     </tr>
 </table>
 
