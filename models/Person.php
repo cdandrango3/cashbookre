@@ -77,7 +77,7 @@ class Person extends \yii\db\ActiveRecord
             [['person_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => PersonTypes::className(), 'targetAttribute' => ['person_type_id' => 'id']],
             [
                 ['ruc', 'ruc', 'commercial_name', 'address', 'city_id', 'province_id'], 'required', 'when' => function ($model) {
-                    return  $model->person_type_id = 1;
+                    return  $model->person_type_id == 1;
                 },
                 //'whenClient' => 'function (attribute, value) {$("#closing").is(":visible");}', 'message' => "Entre el dia del cierre mensual"
             ],
