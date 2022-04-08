@@ -135,7 +135,12 @@ public function actionIndex($tipos){
                 $facturafin->descuento = $d["descuento"];
                 $facturafin->id_head = $model->n_documentos;
                 $facturafin->save();
-
+                if($facturafin->save()){
+                    //$data = json_encode(array('total' => $facturafin->total, 'iva' => $facturafin->iva ,'subtotal'=>$facturafin->de));
+                    //$url = 'http://localhost:8888/egresos?values='.$data;
+                    //$result = file_get_contents($url, false);
+                    //echo $result;
+                }
                 if($model->save()){
                     $tipo=$model->tipo_de_documento;
                     if($tipo=="Cliente") {
