@@ -16,7 +16,7 @@ $get=$_GET["ischair"];
         <td style="padding-left: 210px"><?=$personam->cedula?></td>
     </tr>
     <tr>
-        <td> <?= $personam->address ?></td>
+        <td> LOTE: <?= $personam->address ?></td>
         <td style="padding-left: 210px"> <?=$personam->phones?> </td>
     </tr>
 </table>
