@@ -3,6 +3,7 @@
 namespace app\controllers;
 use app\models\AccountingSeats;
 use app\models\AccountingSeatsDetails;
+use app\models\Annulments;
 use app\models\Charges;
 use app\models\ChartAccounts;
 use app\models\Clients;
@@ -86,6 +87,37 @@ public function actionIndex($tipos){
 
 
         return $this->render("viewf",["salesman"=>$salesman,"model"=>$model1,"model2"=>$model2,"modelfin"=>$model3,"personam"=>$persona]);
+    }
+    public function actionAnular($id){
+        $anulacion=New Annulments();
+        if ($anulacion->load(Yii::$app->request->post())) {
+            $id=$_GET["id"];
+            $head=HeadFact::findOne(["n_documentos"=>$id]);
+            $anulacion->n_factura=$id;
+            $anulacion->save();
+            if(is_null($head->id_anulacion)){
+                $nfact=explode("-",$head->n_documentos);
+                $lastfact = HeadFact::find()->orderBy(new \yii\db\Expression("string_to_array(n_documentos,'-')::int[] DESC"))->one();
+                $lastfactura=explode("-",$lastfact->n_documentos);
+                $num=intval($lastfactura[count($lastfactura)-1]+1);
+                $nfactt= $this->getnfact(1,3)."-".$this->getnfact(1,3)."-".$this->getnfact($num,12);
+                $head->updateAttributes(['n_documentos' => $nfactt,"id_anulacion"=>$anulacion->id]);
+                $body=FacturaBody::findOne(['id_head'=>$id]);
+                $body->updateAttributes(['id_head' => $nfactt]);
+                $fin=Facturafin::findOne(['id_head'=>$id]);
+                $fin->updateAttributes(['id_head' => $nfactt]);
+                $asiento=AccountingSeats::findOne(['head_fact'=>$id]);
+                $asiento->updateAttributes(['head_fact' => $nfactt]);
+                $charge=Charges::find()->where(["n_document"=>$id])->exists();
+                if($charge){
+                    $char=Charges::findOne(['n_document'=>$id]);
+                    $char->updateAttributes(['n_document' => $nfactt]);
+                }
+                return $this->render("/cliente/index?tipos=All");
+            }
+        }
+
+    return $this->render("anular",["model"=>$anulacion]);
     }
     public function actionFactura()
     {
@@ -1342,5 +1374,14 @@ echo "</td>";
     }
     public function actionSync(){
     return $this->render('sync');
+    }
+    function getnfact($input, $pad_len = 7, $prefix = null){
+        if ($pad_len <= strlen($input))
+            trigger_error('<strong>$pad_len</strong> cannot be less than or equal to the length of <strong>$input</strong> to generate invoice number', E_USER_ERROR);
+
+        if (is_string($prefix))
+            return sprintf("%s%s", $prefix, str_pad($input, $pad_len, "0", STR_PAD_LEFT));
+
+        return str_pad($input, $pad_len, "0", STR_PAD_LEFT);
     }
 }

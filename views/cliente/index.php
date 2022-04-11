@@ -52,6 +52,10 @@ if(Yii::$app->session->hasFlash("error")) {
                     <td>
                         <div class="row">
                             <div class="col-4">
+                                <a class="btn btn-primary" id="edit" title="Anular Factura" data-request-method = "POST" data-toggle="tooltip"
+                                   data-confirm-title = "Estas seguro" data-confirm-message = "Estas seguro de querer eliminar completamente este asiento"  role = "modal-remote" href='<?=Url::to(['cliente/anular','id' => $fac->n_documentos])?>'> <i class="fas fa-solid fa-file-xmark"></i></a>
+                            </div>
+                            <div class="col-4">
                                 <a class="btn btn-primary" id="edit" title="Editar" data-request-method = "POST" data-toggle="tooltip"
                                 data-confirm-title = "Estas seguro" data-confirm-message = "Estas seguro de querer eliminar completamente este asiento"  role = "modal-remote" href='<?=Url::to(['cliente/editar','id' => $fac->n_documentos])?>'> <i class="fas fa-edit"></i></a>
                             </div>

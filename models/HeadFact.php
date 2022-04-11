@@ -11,14 +11,16 @@ use Yii;
  * @property string $n_documentos
  * @property int $id_personas
  * @property string|null $referencia
- * @property string $orden_cv
+ * @property string|null $orden_cv
  * @property bool|null $Entregado
  * @property string|null $autorizacion
  * @property string|null $tipo_de_documento
  * @property int|null $id_saleman
  * @property int $id
+ * @property int|null $id_anulacion
+ *
+ * @property Charges[] $charges
  * @property Person $personas
- * @property Person $saleman
  */
 class HeadFact extends \yii\db\ActiveRecord
 {
@@ -36,15 +38,14 @@ class HeadFact extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['f_timestamp'], 'required'],
-            [['n_documentos', 'id_personas','referencia','autorizacion'], 'required'],
-            [['id_personas', 'id_saleman'], 'default', 'value' => null],
-            [['id_personas', 'id_saleman'], 'integer'],
+            [['f_timestamp'], 'safe'],
+            [['n_documentos', 'id_personas'], 'required'],
+            [['id_personas', 'id_saleman', 'id_anulacion'], 'default', 'value' => null],
+            [['id_personas', 'id_saleman', 'id_anulacion'], 'integer'],
             [['Entregado'], 'boolean'],
             [['n_documentos', 'referencia', 'orden_cv', 'autorizacion', 'tipo_de_documento'], 'string', 'max' => 50],
             [['n_documentos'], 'unique'],
             [['id_personas'], 'exist', 'skipOnError' => true, 'targetClass' => Person::className(), 'targetAttribute' => ['id_personas' => 'id']],
-            [['id_saleman'], 'exist', 'skipOnError' => true, 'targetClass' => Person::className(), 'targetAttribute' => ['id_saleman' => 'id']],
         ];
     }
 
@@ -55,16 +56,27 @@ class HeadFact extends \yii\db\ActiveRecord
     {
         return [
             'f_timestamp' => 'F Timestamp',
-            'n_documentos' => 'N° Documentos',
+            'n_documentos' => 'N Documentos',
             'id_personas' => 'Id Personas',
             'referencia' => 'Referencia',
-            'orden_cv' => 'Orden CV',
+            'orden_cv' => 'Orden Cv',
             'Entregado' => 'Entregado',
-            'autorizacion' => 'Autorización',
+            'autorizacion' => 'Autorizacion',
             'tipo_de_documento' => 'Tipo De Documento',
             'id_saleman' => 'Id Saleman',
-            'id' => 'ID'
+            'id' => 'ID',
+            'id_anulacion' => 'Id Anulacion',
         ];
+    }
+
+    /**
+     * Gets query for [[Charges]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCharges()
+    {
+        return $this->hasMany(Charges::className(), ['n_document' => 'n_documentos']);
     }
 
     /**
@@ -75,18 +87,5 @@ class HeadFact extends \yii\db\ActiveRecord
     public function getPersonas()
     {
         return $this->hasOne(Person::className(), ['id' => 'id_personas']);
-    }
-    public function getInstitution()
-    {
-        return $this->hasOne(Institution::className(), ['id' => 'institution_id']);
-    }
-    /**
-     * Gets query for [[Saleman]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getSaleman()
-    {
-        return $this->hasOne(Person::className(), ['id' => 'id_saleman']);
     }
 }

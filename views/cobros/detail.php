@@ -80,7 +80,7 @@ $char=ChartAccounts::findOne(["id"=>$transaccion->chart_account]);
                     <td><?= HTML::a($model2->n_document,Url::to(["/cliente/viewf","id"=>$model2->n_document]))?></td>
                     <td><?= Yii::$app->formatter->asDate($transaccion->date,'yyyy-MM-dd')?></td>
                     <td>Factura</td>
-                    <td><?= $transaccion->balance?></td>
+                    <td><?= $transaccion->balance ?></td>
                     <td><?= $transaccion->saldo?></td>
                     <td><?= $transaccion->amount?></td>
                 </tr>
