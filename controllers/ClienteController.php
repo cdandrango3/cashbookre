@@ -46,16 +46,16 @@ public function actionIndex($tipos){
     if($tipos=="Cliente"){
 
         $query1 = HeadFact::find()->innerJoin("person","head_fact.id_personas=person.id")->where(["head_fact.tipo_de_documento"=>"Cliente"])->andWhere(["person.institution_id"=>
-            $_SESSION['id_ins']->id]);
+            $_SESSION['id_ins']->id])->andwhere(["head_fact.id_anulacion"=>null]);
     }
     else{
         if ($tipos=="Proveedor") {
             $query1 = HeadFact::find()->innerJoin("person","head_fact.id_personas=person.id")->where(["head_fact.tipo_de_documento"=>"Proveedor"])->andWhere(["person.institution_id"=>
-                $_SESSION['id_ins']->id]);;
+                $_SESSION['id_ins']->id])->andwhere(["head_fact.id_anulacion"=>null]);;
         }
         else{
             $query1 = HeadFact::find()->innerJoin("person","head_fact.id_personas=person.id")->andWhere(["person.institution_id"=>
-                $_SESSION['id_ins']->id]);
+                $_SESSION['id_ins']->id])->andwhere(["head_fact.id_anulacion"=>null]);
         }
 
     }
@@ -91,29 +91,48 @@ public function actionIndex($tipos){
     public function actionAnular($id){
         $anulacion=New Annulments();
         if ($anulacion->load(Yii::$app->request->post())) {
-            $id=$_GET["id"];
-            $head=HeadFact::findOne(["n_documentos"=>$id]);
-            $anulacion->n_factura=$id;
-            $anulacion->save();
-            if(is_null($head->id_anulacion)){
-                $nfact=explode("-",$head->n_documentos);
-                $lastfact = HeadFact::find()->orderBy(new \yii\db\Expression("string_to_array(n_documentos,'-')::int[] DESC"))->one();
-                $lastfactura=explode("-",$lastfact->n_documentos);
-                $num=intval($lastfactura[count($lastfactura)-1]+1);
-                $nfactt= $this->getnfact(1,3)."-".$this->getnfact(1,3)."-".$this->getnfact($num,12);
-                $head->updateAttributes(['n_documentos' => $nfactt,"id_anulacion"=>$anulacion->id]);
-                $body=FacturaBody::findOne(['id_head'=>$id]);
-                $body->updateAttributes(['id_head' => $nfactt]);
-                $fin=Facturafin::findOne(['id_head'=>$id]);
-                $fin->updateAttributes(['id_head' => $nfactt]);
-                $asiento=AccountingSeats::findOne(['head_fact'=>$id]);
-                $asiento->updateAttributes(['head_fact' => $nfactt]);
-                $charge=Charges::find()->where(["n_document"=>$id])->exists();
-                if($charge){
-                    $char=Charges::findOne(['n_document'=>$id]);
-                    $char->updateAttributes(['n_document' => $nfactt]);
+            try {
+                $tr = Yii::$app->db->beginTransaction();
+                $id=$_GET["id"];
+                $head = HeadFact::findOne(["n_documentos" => $id]);
+                $anulacion->n_factura = $id;
+                $anulacion->save();
+                if (is_null($head->id_anulacion)) {
+                    $lastfact = HeadFact::find()->orderBy(new \yii\db\Expression("string_to_array(n_documentos,'-')::int[] DESC"))->one();
+                    $lastfactura = explode("-", $lastfact->n_documentos);
+                    $num = intval($lastfactura[count($lastfactura) - 1] + 1);
+                    $nfactt = $this->getnfact(1, 3) . "-" . $this->getnfact(1, 3) . "-" . $this->getnfact($num, 9);
+                    $head->updateAttributes(["id_anulacion" => $anulacion->id]);
+                    $data = $head->attributes;
+                    unset($data["id"]);
+                    $headactual = new HeadFact();
+                    $headactual->setAttributes($data);
+                    $headactual->n_documentos = $nfactt;
+                    $headactual->id_anulacion = NULL;
+                    $headactual->save();
+                    $body = FacturaBody::find()->where(['id_head' => $id])->all();
+                    foreach ($body as $bod) {
+                        $bod->updateAttributes(['id_head' => $nfactt]);
+                    }
+
+                    $fin = Facturafin::findOne(['id_head' => $id]);
+                    $fin->updateAttributes(['id_head' => $nfactt]);
+                    $charge = Charges::find()->where(["n_document" => $id])->exists();
+                    if ($charge) {
+                        $char = Charges::findOne(['n_document' => $id]);
+                        $char->updateAttributes(['n_document' => $nfactt]);
+                    }
+                    $asiento = AccountingSeats::find()->where(['head_fact' => $id])->all();
+                    foreach ($asiento as $asi) {
+                        $asi->updateAttributes(['head_fact' => $nfactt]);
+                    }
+                    $tr->commit();
+                    return $this->redirect("index?tipos=All");
                 }
-                return $this->render("/cliente/index?tipos=All");
+            }
+            catch(\Exception $e){
+                $tr->rollBack();
+                throw $e;
             }
         }
 
@@ -599,10 +618,8 @@ else{
     {
 
         $_SESSION['id_ins'] = Institution::findOne(['users_id'=>Yii::$app->user->identity->id]);
-        $model2 = HeadFact::find()->innerjoin("person","person.id=head_fact.id_personas")->andFilterWhere(['like', 'head_fact.n_documentos', $fil . '%', false])->andFilterWhere(['head_fact.id_personas' => $per])->andFilterWhere(['head_fact.tipo_de_documento' => $tipo])->andFilterWhere(['person.institution_id' =>  $_SESSION['id_ins']->id])->all();
+        $model2 = HeadFact::find()->innerjoin("person","person.id=head_fact.id_personas")->andFilterWhere(['like', 'head_fact.n_documentos', $fil . '%', false])->andFilterWhere(['head_fact.id_personas' => $per])->andFilterWhere(['head_fact.tipo_de_documento' => $tipo])->andFilterWhere(['person.institution_id' =>  $_SESSION['id_ins']->id])->andwhere(["head_fact.id_anulacion"=>null])->all();
         yii::debug($model2);
-
-
         foreach ($model2 as $mod) {
             $total = Facturafin::findOne(['id_head' => $mod->n_documentos]);
             if (!is_null($total)) {
@@ -646,47 +663,11 @@ else{
 
         }
     }
-    public function action
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    ($fil){
-
-
-
-
+    public function action($fil){
             $nombre = $_POST['tipo'];
         yii::debug($nombre);
         $model2=HeadFact::find()->filterWhere(["tipo_de_documento"=>$fil])->andFilterWhere(['like', 'n_documentos', $nombre. '%' , false])->all();
          yii::debug($model2);
-
-
          foreach($model2 as $mod){
              $total=Facturafin::findOne(['id_head'=>$mod->n_documentos]);
 

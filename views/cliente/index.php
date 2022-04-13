@@ -53,7 +53,7 @@ if(Yii::$app->session->hasFlash("error")) {
                         <div class="row">
                             <div class="col-4">
                                 <a class="btn btn-primary" id="edit" title="Anular Factura" data-request-method = "POST" data-toggle="tooltip"
-                                   data-confirm-title = "Estas seguro" data-confirm-message = "Estas seguro de querer eliminar completamente este asiento"  role = "modal-remote" href='<?=Url::to(['cliente/anular','id' => $fac->n_documentos])?>'> <i class="fas fa-solid fa-file-xmark"></i></a>
+                                   data-confirm-title = "Estas seguro" data-confirm-message = "Estas seguro de querer eliminar completamente este asiento"  role = "modal-remote" href='<?=Url::to(['cliente/anular','id' => $fac->n_documentos])?>'> <i class="fas fa-file"></i></a>
                             </div>
                             <div class="col-4">
                                 <a class="btn btn-primary" id="edit" title="Editar" data-request-method = "POST" data-toggle="tooltip"
@@ -112,7 +112,7 @@ if(Yii::$app->session->hasFlash("error")) {
         function ajax(c,p,t){
         $.ajax({
               method: "POST",             
-               url: '/web/cliente/buscarf?fil='+c+'&&per='+p+'&&tipo='+t,
+               url: '/cliente/buscarf?fil='+c+'&&per='+p+'&&tipo='+t,
                data: { tipo:$('#nfac').val() },
             success: function(data) {
                 $("#ver").html(data)        

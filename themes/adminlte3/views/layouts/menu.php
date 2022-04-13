@@ -406,6 +406,13 @@ $query = new yii\db\Query();
                         </a>
 
                     </li>
+                    <li class="nav-item">
+                        <a href="<?= Url::to(['/anullments/index']) ?>" class="nav-link">
+                            <p>Anulaciones</p>
+                        </a>
+
+                    </li>
+
                 </ul>
             </li>
 			 <?php } } ?>

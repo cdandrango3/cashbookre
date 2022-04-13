@@ -18,4 +18,6 @@ $id=$_GET["id"]
         <?php ActiveForm::end(); ?>
     </div>
 </div>
+<?php
+?>
 
