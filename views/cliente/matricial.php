@@ -144,16 +144,16 @@ $ifex=\app\models\ChargesDetail::find()->where(["id_asiento"=>$modelo->id])->exi
 
         <tr>
             <td class="fin">
-                 <?=$modelfin->subtotal12?:0 + $modelfin->subtotal0?:0 ?> </td>
+                 <?=sprintf('%.2f',$modelfin->subtotal12?:0 + $modelfin->subtotal0?:0) ?> </td>
             </tr>
 
         <tr>
             <td class="fin">
-                <?=$modelfin->iva?> </td>
+                <?=sprintf('%.2f',$modelfin->iva)?> </td>
         </tr>
         <tr>
             <td class="fin">
-                <?=$modelfin->total?>
+                <?=sprintf('%.2f',$modelfin->total)?>
             </td>
         </tr>
     </table>
