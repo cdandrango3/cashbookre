@@ -24,7 +24,7 @@ $get=$_GET["ischair"];
 <br><br><br>
 <div class="container">
 
-    <table border="0" cellpadding="4" cellspacing="0" style="width:100%;font-family: Arial;font-size:9pt">
+    <table border="0" cellpadding="4" cellspacing="0" style="width:100%;font-family: Arial;font-size:9pt ;padding-left: 59px">
         <tbody>
         <?php foreach($model2 as $mbody): ?>
             <?php $pro=$producto::findOne($mbody->id_producto)?>
@@ -34,12 +34,26 @@ $get=$_GET["ischair"];
                 <td><?=sprintf('%.2f',$mbody->precio_u)?></td>
                 <td><?=sprintf('%.2f',$mbody->precio_total)?></td>
             </tr>
+
+        <tr>
+        </tr>
         <?php endforeach ?>
+
         </tbody>
 
     </table>
+    <div style = " position:absolute; z-index: 99999; bottom:0; margin:40px;margin-right:59px">
 
+<table>
+    <tr style="margin-left:100px ;font-size:9pt">
+        <td>
+            <?= $modelfin->description?>
+        </td>
 
+    </tr>
+
+</table>
+</div>
 </div>
 <div class="col-3">
 
@@ -139,7 +153,7 @@ $ifex=\app\models\ChargesDetail::find()->where(["id_asiento"=>$modelo->id])->exi
     <?php endforeach?>
 
 <?php endif; ?>
-<div style = " position:absolute; z-index: 99999; bottom:0; margin:40px">
+<div style = " position:absolute; z-index: 99999; bottom:0; margin:40px;margin-right:59px">
     <table style="text-align: right ; width:100%;font-family: Arial;font-size:9pt">
 
         <tr>
@@ -150,6 +164,10 @@ $ifex=\app\models\ChargesDetail::find()->where(["id_asiento"=>$modelo->id])->exi
         <tr>
             <td class="fin">
                 <?=sprintf('%.2f',$modelfin->iva)?> </td>
+        </tr>
+        <tr>
+            <td class="fin">
+                <?=sprintf('%.2f',!is_null($modelfin->descuento)?$modelfin->descuento:0)?> </td>
         </tr>
         <tr>
             <td class="fin">

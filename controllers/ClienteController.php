@@ -46,16 +46,16 @@ public function actionIndex($tipos){
     if($tipos=="Cliente"){
 
         $query1 = HeadFact::find()->innerJoin("person","head_fact.id_personas=person.id")->where(["head_fact.tipo_de_documento"=>"Cliente"])->andWhere(["person.institution_id"=>
-            $_SESSION['id_ins']->id])->andwhere(["head_fact.id_anulacion"=>null]);
+            $_SESSION['id_ins']->id])->andwhere(["head_fact.id_anulacion"=>null])->orderBy(new \yii\db\Expression("string_to_array(n_documentos,'-')::int[] DESC"));
     }
     else{
         if ($tipos=="Proveedor") {
             $query1 = HeadFact::find()->innerJoin("person","head_fact.id_personas=person.id")->where(["head_fact.tipo_de_documento"=>"Proveedor"])->andWhere(["person.institution_id"=>
-                $_SESSION['id_ins']->id])->andwhere(["head_fact.id_anulacion"=>null]);;
+                $_SESSION['id_ins']->id])->andwhere(["head_fact.id_anulacion"=>null])->orderBy(new \yii\db\Expression("string_to_array(n_documentos,'-')::int[] DESC"));;
         }
         else{
             $query1 = HeadFact::find()->innerJoin("person","head_fact.id_personas=person.id")->andWhere(["person.institution_id"=>
-                $_SESSION['id_ins']->id])->andwhere(["head_fact.id_anulacion"=>null]);
+                $_SESSION['id_ins']->id])->andwhere(["head_fact.id_anulacion"=>null])->orderBy(new \yii\db\Expression("string_to_array(n_documentos,'-')::int[] DESC"));
         }
 
     }
@@ -567,7 +567,7 @@ else{
                 'mode' => \kartik\mpdf\Pdf::MODE_UTF8, // leaner size using standard fonts
                 'format' => [210,148],
                 'content' => $content,
-                'marginTop' => 25,
+                'marginTop' => 30,
                 'marginBottom' => 10,
                 'marginLeft' => 10,
                 'marginRight' => 10,
