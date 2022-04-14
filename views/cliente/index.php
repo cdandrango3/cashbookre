@@ -74,7 +74,7 @@ if(Yii::$app->session->hasFlash("error")) {
                         <?= HTML::a("Fac " .  $fac->n_documentos,Url::to(['cliente/viewf', 'id' => $fac->n_documentos]))?>
                     </td>
                     <td>
-                        <?= $total->subtotal12?>
+                        <?= $total->subtotal12?:0 + $total->subtotal0?:0 ?>
                     </td>
                     <td><?= $total->iva?></td>
                     <td><?= $total->total?></td>
