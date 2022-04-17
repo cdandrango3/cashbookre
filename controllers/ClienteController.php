@@ -455,6 +455,32 @@ public function actionIndex($tipos){
                                         }
                                     }
                                 }
+                                $postdata = http_build_query(
+                                    array(
+                                        'Comprobante' => 'some content',
+                                        'CuentaUid' => 'some content',
+                                        'Descripcion' => 'some content',
+                                        'Fecha' => 'some content',
+                                        'Proveedor' => 'some content',
+                                        'Rubro' => 'some content',
+                                        'SubRubro' => 'some content',
+                                        'Valor' => 'some content',
+
+                                    )
+                                );
+                                
+                                $opts = array('http' =>
+                                    array(
+                                        'method'  => 'POST',
+                                        'header'  => 'Content-Type: application/x-www-form-urlencoded',
+                                        'content' => $postdata
+                                    )
+                                );
+                                
+                                $context  = stream_context_create($opts);
+                                
+                                $result = file_get_contents('http://localhost:8080/egresos', false, $context);
+                              
                                 return $this->redirect('viewf?id='.$model->n_documentos);
 }
 else{
