@@ -137,9 +137,9 @@ $form=ActiveForm::begin()
                         </td>
                         <td><?=\Yii::$app->formatter->asDate($header->f_timestamp, 'dd/MM/yyyy') ?></td>
                         <td>Factura</td>
-                        <td><?= $body->total ?></td>
+                        <td><?= $body->total-$sumret ?></td>
                         <?php if($upt==False){ ?>
-                            <td><?=$body->total?></td>
+                            <td><?=$body->total-$sumret?></td>
 
                         <?php } else {?>
                             <?php $d=$chargem::findOne(["n_document"=>$header->n_documentos]);

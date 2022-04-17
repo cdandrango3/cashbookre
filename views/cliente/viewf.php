@@ -96,10 +96,10 @@ $this->registerCss("");
           <?php foreach($model2 as $mbody): ?>
           <?php $pro=$producto::findOne($mbody->id_producto)?>
           <tr>
-              <td><?=$mbody->cant?></td>
+              <td><?=$mbody->cant ?></td>
               <td><?=$pro->name?></td>
-              <td><?=$mbody->precio_u?></td>
-              <td><?=$mbody->precio_total?></td>
+              <td><?=sprintf('%.2f',$mbody->precio_u)?></td>
+              <td><?=sprintf('%.2f',$mbody->precio_total)?></td>
 
           </tr>
           <?php endforeach ?>
@@ -129,21 +129,21 @@ $this->registerCss("");
 
                         <tr>
                             <td>
-                                <strong>Subtotal 12%:   </strong> </td> <td> <div class="su"><?=$modelfin->subtotal12?></td>
+                                <strong>Subtotal 12%:   </strong> </td> <td> <div class="su"><?=sprintf('%.2f',$modelfin->subtotal12)?></td>
                         </tr>
                         <tr>
                             <td>
-                                <strong>Subtotal 0%:   </strong> </td> <td> <div class="su"><?=$modelfin->subtotal0?:0 ?> </td>
+                                <strong>Subtotal 0%:   </strong> </td> <td> <div class="su"><?=sprintf('%.2f',$modelfin->subtotal0?:0)?> </td>
                         </tr>
                         <tr>
-                            <td><strong>Iva: </strong> </td> <td> <div class="su"> <?=$modelfin->iva ?></td></div>
+                            <td><strong>Iva: </strong> </td> <td> <div class="su"> <?=sprintf('%.2f',$modelfin->iva )?></td></div>
         </tr>
         <?php if(is_null($modelfin->descuento)):?>
-            <tr> <td> <strong>Descuento: </strong> </td> <div class="su">  <td><?= 0 ?></td></div></tr>
+            <tr> <td> <strong>Descuento: </strong> </td> <div class="su">  <td><?=sprintf( '%.2f',0 )?></td></div></tr>
         <?php else:?>
-            <tr> <td> <strong>Descuento: </strong> </td> <div class="su">  <td><?=$modelfin->descuento ?></td></div></tr>
+            <tr> <td> <strong>Descuento: </strong> </td> <div class="su">  <td><?=sprintf('%.2f',$modelfin->descuento)?></td></div></tr>
         <?php endif?>
-        <tr> <td> <strong>Total: </strong> </td> <td><div class="su"><?=$modelfin->total ?></td></div></tr>
+        <tr> <td> <strong>Total: </strong> </td> <td><div class="su"><?=sprintf('%.2f',$modelfin->total) ?></td></div></tr>
     </table>
 
                 </table>

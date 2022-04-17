@@ -8,10 +8,12 @@ use app\models\BankDetails;
 use app\models\Charges;
 use app\models\ChargesDetail;
 use app\models\ChartAccounts;
+use app\models\FacturaBody;
 use app\models\Facturafin;
 use app\models\HeadFact;
 use app\models\Institution;
 use app\models\Person;
+use app\models\Retention;
 use DateTime;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -31,6 +33,23 @@ class CobrosController extends Controller
         $Header=New HeadFact;
         $id=$_GET['id'];
         $body=Facturafin::findOne(["id_head"=>$id]);
+        $sum=0;
+        $facbod=FacturaBody::find()->where(["id_head"=>$id])->all();
+        foreach ($facbod as $fac){
+            if(!is_null($fac->retencion_imp)){
+                $retencion=Retention::findOne($fac->retencion_imp);
+                $base=$fac->precio_total;
+                $porcentaje=$retencion->percentage;
+                $sum+=$base*$porcentaje/100;
+            }
+            if(!is_null($fac->retencion_iva)){
+                $retencion=Retention::findOne($fac->retencion_iva);
+                $base=($fac->precio_total*12)/100;
+                $porcentaje=$retencion->percentage;
+                $sum+=$base*$porcentaje/100;
+            }
+
+        }
         $header=$Header->findOne(["n_documentos"=>$id]);
         $persona=$Persona::findOne(["id"=>$header->id_personas]);
         $upt=$chargem::find()->where(["n_document"=>$header->n_documentos])->exists();
@@ -55,7 +74,7 @@ class CobrosController extends Controller
                         else{
                             $saldo_nuevo=$saldo_anterior-$charges_detail->amount;
                             $charges_detail->id_charge = $ac->id;
-                            $charges_detail->balance = $body->total;
+                            $charges_detail->balance = $body->total-$sum;
                             $charges_detail->saldo = $saldo_nuevo;
                             $charges_detail->save();
                             if($charges_detail->save()){
@@ -98,11 +117,11 @@ class CobrosController extends Controller
                             if ($chargem->save()) {
 
                                 $charges_detail->id_charge = $chargem->id;
-                                $charges_detail->balance = $body->total;
-                                $charges_detail->saldo = $body->total;
+                                $charges_detail->balance = $body->total-$sum;
+                                $charges_detail->saldo = $body->total-$sum;
                                 $charges_detail->save();
                                 if ($charges_detail->save()) {
-                                    $charges_detail->updateAttributes(['saldo' => ($body->total) - ($charges_detail->amount)]);
+                                    $charges_detail->updateAttributes(['saldo' => ($body->total-$sum) - ($charges_detail->amount)]);
                                 }
 
                                 $gr = rand(1, 100090000);
@@ -144,7 +163,7 @@ class CobrosController extends Controller
             $url = $_SERVER['HTTP_REFERER'];
             $this->redirect($url);
         }
-        return $this->render("index",["chargem"=>$chargem,"charguesd"=>$charges_detail,"Person"=>$persona,"body"=>$body,"header"=>$header,"upt"=>$upt,"bank"=>$bank_details]);
+        return $this->render("index",["chargem"=>$chargem,"charguesd"=>$charges_detail,"Person"=>$persona,"body"=>$body,"header"=>$header,"upt"=>$upt,"bank"=>$bank_details,"sumret"=>$sum]);
     }
     public function actionView(){
         $id_ins=Institution::findOne(['users_id'=>Yii::$app->user->identity->id]);

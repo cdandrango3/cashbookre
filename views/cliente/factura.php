@@ -78,7 +78,9 @@ $this->registerCss('
         }
     }
     ?>
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin( ['action' => ['index'],
+        'method' => 'get',
+        'options' => ['id' => 'dynamic-form111']]) ?>
     <div class="container">
         <div class="card ">
             <div class="card-head bg-primary p-4">
@@ -684,7 +686,7 @@ function calcular(){
 
     })
     $('#añadir')
-$('#buttonsubmit').click(function(){
+$('body').on('beforeSubmit', 'form#dynamic-form111',function(){
     var f=false;
     cantidad=[];
     preciou=[];
