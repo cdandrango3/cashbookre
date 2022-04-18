@@ -1,5 +1,6 @@
 <?php
 /**/
+/*
 return [
     'class' => 'yii\db\Connection',
     'dsn' => 'pgsql:host=localhost;dbname=tre1',
@@ -14,7 +15,8 @@ return [
     ], // Postg
 
 ];
-/*
+*/
+
 return [
     'class' => 'yii\db\Connection',
     'dsn' => 'pgsql:host=ec2-54-157-79-121.compute-1.amazonaws.com;dbname=dfn3m087fsipl',
@@ -32,6 +34,6 @@ return [
 ];
 
 
-*/
+
 
 
