@@ -45,7 +45,7 @@ $prolist=\yii\helpers\Json::encode($listProduct);
 $lcosto=\yii\helpers\Json::encode($listcosto);
 $liva=\yii\helpers\Json::encode($listIva);
 $n_pro=\yii\helpers\Json::encode($cast);
-yii::debug($n_pro
+yii::debug($n_pro);
 $authItemChild = Yii::$app->request->post('Person');
 $auth = Yii::$app->request->post('HeadFact');
 $request=Yii::$app->request->post('FacturaBody');
