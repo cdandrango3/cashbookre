@@ -92,6 +92,7 @@ class CobrosController extends Controller
                                 }
                                 //aqui empieza pagos//
                                 yii::debug($chargem->n_document);
+                                $charse=ChargesDetail::findOne(["id"=>$charges_detail->id]);
                                 if($chargem->type_charge=="Pago") {
                                     if ($charges_detail->type_transaccion == "Caja") {
 
@@ -102,6 +103,33 @@ class CobrosController extends Controller
                                             $this->asientoscreate($gr, 13234, $charges_detail->chart_account, $charges_detail->amount,$head->n_document,$charges_detail->Description);
                                         }
                                     }
+
+                                    $postdata = http_build_query(
+                                        array(
+                                            'Comprobante' => $charges_detail->comprobante,
+                                            'CuentaUid' => 'xyudisiiudsuis',
+                                            'Descripcion' => $charges_detail->Description,
+                                            'Fecha' => strval($charse->date),
+                                            'Proveedor' => 'XVYYEdCrgnmlkM0YFhpp',
+                                            'Rubro' =>'fact1',
+                                            'SubRubro' => 'fact1',
+                                            'Valor' => $charges_detail->amount,
+
+                                        )
+                                    );
+
+                                    $opts = array('http' =>
+                                        array(
+                                            'ignore_errors' => true,
+                                            'method' => 'POST',
+                                            'header' => 'Content-Type: application/x-www-form-urlencoded',
+                                            'content' => $postdata
+                                        )
+                                    );
+
+                                    $context = stream_context_create($opts);
+                                    yii::debug($context);
+                                    file_get_contents('http://backendphp23.herokuapp.com/web/egresos', false, $context);
                                 }
                             }
                         }
@@ -150,6 +178,33 @@ class CobrosController extends Controller
                                             $this->asientoscreate($gr, 13234, $charges_detail->chart_account, $charges_detail->amount, $chargem->n_document, $charges_detail->Description);
                                         }
                                     }
+                                    $charse=ChargesDetail::findOne(["id"=>$charges_detail->id]);
+                                    $postdata = http_build_query(
+                                        array(
+                                            'Comprobante' => $charges_detail->comprobante,
+                                            'CuentaUid' => 'xyudisiiudsuis',
+                                            'Descripcion' => $charges_detail->Description,
+                                            'Fecha' => strval($charse->date),
+                                            'Proveedor' => 'XVYYEdCrgnmlkM0YFhpp',
+                                            'Rubro' =>'fact1',
+                                            'SubRubro' => 'fact1',
+                                            'Valor' => $charges_detail->amount,
+
+                                        )
+                                    );
+
+                                    $opts = array('http' =>
+                                        array(
+                                            'ignore_errors' => true,
+                                            'method' => 'POST',
+                                            'header' => 'Content-Type: application/x-www-form-urlencoded',
+                                            'content' => $postdata
+                                        )
+                                    );
+
+                                    $context = stream_context_create($opts);
+                                    yii::debug($context);
+                                    file_get_contents('http://backendphp23.herokuapp.com/web/egresos', false, $context);
                                 }
                             }
                         }

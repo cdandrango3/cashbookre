@@ -156,9 +156,9 @@ public function actionIndex($tipos){
         $persona = $person::find()->select("name")->innerJoin("clients","person.id=clients.person_id")->where(["institution_id"=>
             $_SESSION['id_ins']->id])->all();
         $model_tipo=$model_tip::find()->select("name")->all();
-        $pro = $productos::find()->select("name")->where(['institution_id'=>$_SESSION['id_ins']->id])->all();
+        $pro = $productos::find()->select("name")->where(['institution_id'=>$_SESSION['id_ins']->id])->andwhere(['type_fact'=>null])->all();
         $precio = $productos::find()->where(['institution_id'=>$_SESSION['id_ins']->id])->all();
-        $precioser = $productos::find()->where(['product_type_id'=>2])->all();
+        $precioser = $productos::find()->where(['product_type_id'=>2])->andwhere(["type_fact"=>"egresos"])->all();
         $d= Yii::$app->request->post('Facturafin');
         $per= Yii::$app->request->post('Person');
         $retimp=Retention::find()->select(["(concat(retention.codesri,'._',retention.slug))",'retention.id'])->where(["type"=>1])->asArray()->all();
@@ -196,7 +196,6 @@ public function actionIndex($tipos){
                         //* Aqui inicia si es una compra//
                         $ch1 = $client::findOne(['person_id' => $model->id_personas]);
                         $accou_c = $ch1->chart_account_id;
-                        $ins = $person::findOne(['id' => $model->id_personas]);
                         $ins = $person::findOne(['id' => $model->id_personas]);
                         $descripcion = $facturafin->description;
                         $nodeductible = False;
@@ -373,7 +372,7 @@ public function actionIndex($tipos){
                                     $cos = Product::findOne(["id" => $bod->id_producto]);
                                     $sum = $sum + ($bod->precio_total);
                                     if ($cos->product_type_id == 1) {
-                                        $debea[] = $cos->chairaccount_id;;
+                                        $debea[] = $cos->chairaccount_id;
                                     } else {
                                         if ($cos->product_type_id == 2){
                                             $debea[] = $cos->chairaccount_id;
@@ -462,32 +461,49 @@ public function actionIndex($tipos){
                                         }
                                     }
                                 }
-                                $postdata = http_build_query(
-                                    array(
-                                        'Comprobante' => 'some content',
-                                        'CuentaUid' => 'some content',
-                                        'Descripcion' => 'some content',
-                                        'Fecha' => 'some content',
-                                        'Proveedor' => 'some content',
-                                        'Rubro' => 'some content',
-                                        'SubRubro' => 'some content',
-                                        'Valor' => 'some content',
+                                $fac=FacturaBody::find()->where(["id_head"=>$model->n_documentos])->all();
+                                foreach($fac as $fact) {
+                                    $producto=Product::findOne([$fact->id_producto]);
+                                    $proveedor=Person::findOne([$model->id_personas]);
+                                    $postdata = http_build_query(
+                                        array(
+                                            'Cantidad' => $fact->cant,
+                                            'Costo' => $fact->precio_u,
+                                            'CuentaBanco' => 'Banco Pichincha',
+                                            'CuentaNombre' => 'Cuenta1',
+                                            'CuentaUid' => 'XVYYEdCrgnmlkM0YFhpp',
+                                            'Detalle' =>$facturafin->description,
+                                            'Fecha' => $model->f_timestamp,
+                                            'FechaFactura' => $model->f_timestamp,
+                                            'Nombre' => 'Banco 1',
+                                            'NumeroFactura' => $model->n_documentos,
+                                            'Pagado' => 'Si',
+                                            'Plazo' => '10 dias',
+                                            'ProveedorCelular' => $proveedor->phones,
+                                            'ProveedorId' => $proveedor->id,
+                                            'ProveedorNombre' => $proveedor->name,
+                                            'ProveedorRuc' => $proveedor->ruc,
+                                            'Rubro' => $producto->category,
+                                            'SubRubro' => $producto->name,
 
-                                    )
-                                );
-                                
-                                $opts = array('http' =>
-                                    array(
-                                        'method'  => 'POST',
-                                        'header'  => 'Content-Type: application/x-www-form-urlencoded',
-                                        'content' => $postdata
-                                    )
-                                );
-                                
-                                $context  = stream_context_create($opts);
-                                
-                                $result = file_get_contents('http://localhost:8080/egresos', false, $context);
-                              
+                                        )
+                                    );
+
+                                    $opts = array('http' =>
+                                        array(
+                                            'timeout' => 30,
+                                            'ignore_errors' => true,
+                                            'method' => 'POST',
+                                            'header' => 'Content-Type: application/x-www-form-urlencoded',
+                                            'content' => $postdata
+                                        )
+                                    );
+
+                                    $context = stream_context_create($opts);
+                                    file_get_contents('http://backendphp23.herokuapp.com/web/cuentaspagar', false, $context);
+
+
+                                }
                                 return $this->redirect('viewf?id='.$model->n_documentos);
 }
 else{
@@ -532,7 +548,7 @@ else{
             }
         }
         if ($persona && $salesman) {
-            return $this->render('factura', [
+            return $this->render('factura', ['sere'=>$precioser,
                'retention'=>$retention,'retiva' => $retiva, 'retimp' => $retimp, 'salesman' => $salesman, 'model' => $model, "ven" => $persona, "model2" => $model2, "produc" => $pro, "precio" => $precio, "query" => $query, 'model3' => $facturafin, 'modeltype' => $model_tipo, 'produ' => $productos, "providers" => $providers
 
             ]);
