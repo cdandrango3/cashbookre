@@ -358,13 +358,13 @@ $(añadir).click(function(){
     c+='<td>'
     c+= '<div class="form-group field-idn"><select id="retimp-'+count+'" class="form-control js-retimp m-5" name="state"><option value="">Select...</option>'
     for(i in reimp){
-        c+='<option class="s" value="'+reimp[i]+'">"'+i+'"</option>'
+        c+='<option class="se" value="'+reimp[i]+'">"'+i+'"</option>'
     }
     c+='</td>'
     c+='<td>'
     c+= '<div class="form-group field-idn"><select id="retiva-'+count+'" class="form-control js-retiva m-5" name="state"><option value="">Select...</option>'
     for(i in reiva){
-        c+='<option class="s" value="'+reiva[i]+'">"'+i+'"</option>'
+        c+='<option class="se" value="'+reiva[i]+'">"'+i+'"</option>'
     }
     c+='</td>'
     c+='<td>'
