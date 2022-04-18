@@ -31,7 +31,7 @@ class Annulments extends \yii\db\ActiveRecord
         return [
             [['descripcion', 'n_factura'], 'required'],
             [['n_factura'], 'string'],
-            [['descripcion'], 'string', 'max' => 20],
+            [['descripcion'], 'string', 'max' => 100],
             [['n_factura'], 'unique'],
         ];
     }

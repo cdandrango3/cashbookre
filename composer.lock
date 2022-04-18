@@ -138,7 +138,7 @@
             "version": "5.15.4",
             "source": {
                 "type": "git",
-                "url": "git@github.com:FortAwesome/Font-Awesome.git",
+                "url": "https://github.com/FortAwesome/Font-Awesome.git",
                 "reference": "7d3d774145ac38663f6d1effc6def0334b68ab7e"
             },
             "dist": {
@@ -1317,12 +1317,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kartik-v/yii2-widget-datepicker.git",
-                "reference": "f5f8b396cf03d4a383aad5e7b338f8cb065abf66"
+                "reference": "9d28ec5180e65c1966ffd9f18df33967999446a2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-widget-datepicker/zipball/f5f8b396cf03d4a383aad5e7b338f8cb065abf66",
-                "reference": "f5f8b396cf03d4a383aad5e7b338f8cb065abf66",
+                "url": "https://api.github.com/repos/kartik-v/yii2-widget-datepicker/zipball/9d28ec5180e65c1966ffd9f18df33967999446a2",
+                "reference": "9d28ec5180e65c1966ffd9f18df33967999446a2",
                 "shasum": ""
             },
             "require": {
@@ -1366,9 +1366,9 @@
             ],
             "support": {
                 "issues": "https://github.com/kartik-v/yii2-widget-datepicker/issues",
-                "source": "https://github.com/kartik-v/yii2-widget-datepicker/tree/v1.4.8"
+                "source": "https://github.com/kartik-v/yii2-widget-datepicker/tree/master"
             },
-            "time": "2021-10-28T03:58:09+00:00"
+            "time": "2022-04-18T08:33:34+00:00"
         },
         {
             "name": "kartik-v/yii2-widget-depdrop",
@@ -1656,16 +1656,16 @@
         },
         {
             "name": "mpdf/mpdf",
-            "version": "v8.1.0",
+            "version": "v8.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mpdf/mpdf.git",
-                "reference": "84a55688fdc9c86134f71a9ffe96a14bc6d059a7"
+                "reference": "e511e89a66bdb066e3fbf352f00f4734d5064cbf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mpdf/mpdf/zipball/84a55688fdc9c86134f71a9ffe96a14bc6d059a7",
-                "reference": "84a55688fdc9c86134f71a9ffe96a14bc6d059a7",
+                "url": "https://api.github.com/repos/mpdf/mpdf/zipball/e511e89a66bdb066e3fbf352f00f4734d5064cbf",
+                "reference": "e511e89a66bdb066e3fbf352f00f4734d5064cbf",
                 "shasum": ""
             },
             "require": {
@@ -1729,7 +1729,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2022-04-16T08:17:15+00:00"
+            "time": "2022-04-18T11:50:28+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -7243,5 +7243,5 @@
         "php": ">=5.6.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.2.0"
 }

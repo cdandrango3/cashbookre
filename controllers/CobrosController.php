@@ -182,7 +182,7 @@ class CobrosController extends Controller
                                     $postdata = http_build_query(
                                         array(
                                             'Comprobante' => $charges_detail->comprobante,
-                                            'CuentaUid' => 'xyudisiiudsuis',
+                                            'CuentaUid' => 'XVYYEdCrgnmlkM0YFhpp',
                                             'Descripcion' => $charges_detail->Description,
                                             'Fecha' => strval($charse->date),
                                             'Proveedor' => 'XVYYEdCrgnmlkM0YFhpp',
