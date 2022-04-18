@@ -17,6 +17,7 @@ use yii\widgets\ActiveForm;
 /* @var $form ActiveForm */
 $producto=New Product;
 $cast=[];
+
 foreach($dbo as $do){
 $pro = $producto::findOne($do->id_producto);
 $cast[$pro->id]=$pro->name;

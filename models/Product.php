@@ -20,6 +20,7 @@ use Yii;
  * @property int|null $Chairinve
  * @property int|null $charingresos
  * @property int|null $institution_id
+ * @property string|null $type_fact
  *
  * @property FacturaBody[] $facturaBodies
  */
@@ -39,11 +40,12 @@ class Product extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'product_type_id', 'product_iva_id'], 'required'],
+            [['name'], 'required'],
             [['status'], 'boolean'],
             [['product_type_id', 'chairaccount_id', 'Chairinve', 'charingresos', 'institution_id'], 'default', 'value' => null],
             [['product_type_id', 'chairaccount_id', 'Chairinve', 'charingresos', 'institution_id'], 'integer'],
             [['product_iva_id', 'precio', 'costo'], 'number'],
+            [['type_fact'], 'string'],
             [['name', 'brand'], 'string', 'max' => 250],
             [['category'], 'string', 'max' => 258],
             [['name'], 'unique'],
@@ -57,18 +59,19 @@ class Product extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Nombre',
-            'status' => 'Disponible',
-            'category' => 'Categoria',
+            'name' => 'Name',
+            'status' => 'Status',
+            'category' => 'Category',
             'product_type_id' => 'Product Type ID',
-            'brand' => 'Marca',
-            'product_iva_id' => 'Product Iva',
+            'brand' => 'Brand',
+            'product_iva_id' => 'Product Iva ID',
             'precio' => 'Precio',
             'costo' => 'Costo',
             'chairaccount_id' => 'Chairaccount ID',
             'Chairinve' => 'Chairinve',
             'charingresos' => 'Charingresos',
             'institution_id' => 'Institution ID',
+            'type_fact' => 'Type Fact',
         ];
     }
 

@@ -26,12 +26,17 @@ $listtypepro=ArrayHelper::map($modeltype,"name","name");
 $listruc=ArrayHelper::map($query,"id","name");
 $prelist=\yii\helpers\Json::encode($listPrecio);
 $prolist=\yii\helpers\Json::encode($listProduct);
+$proegre=\yii\helpers\Json::encode(ArrayHelper::map($sere,"name","id"));
 $lcosto=\yii\helpers\Json::encode($listcosto);
 $liva=\yii\helpers\Json::encode($listIva);
 $authItemChild = Yii::$app->request->post('Person');
 $auth = Yii::$app->request->post('HeadFact');
 $request=Yii::$app->request->post('FacturaBody');
 $model->f_timestamp=date("Y-m-d");
+    $accountd=\yii\helpers\Json::encode(ArrayHelper::map(\app\models\ChartAccounts::find()
+        ->Select(["id,concat(code,' ',slug) as name"])
+        ->alias('t')
+        ->where(['(select count(*) from chart_accounts t2 where t2.parent_id=t.id)'=>0])->andWhere(['institution_id'=>1])->asArray()->all(),'id', 'name'));
 $account = \yii\helpers\Json::encode(ArrayHelper::map(\app\models\ChartAccounts::find()
     ->Select(["id,concat(code,' ',slug) as name"])
     ->alias('t')
@@ -78,7 +83,7 @@ $this->registerCss('
         }
     }
     ?>
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin() ?>
     <div class="container">
         <div class="card ">
             <div class="card-head bg-primary p-4">
@@ -136,6 +141,7 @@ $this->registerCss('
     <ul>
         <li><a href="#tabs-1">Factura</a></li>
         <li><a href="#tabs-2">Retencion</a></li>
+        <li><a href="#tabs-3">Cuentas</a></li>
     </ul>
     <div id="tabs-1">
         <?php echo HTML::tag("a", "añadir detalle", ["value" => "ff", "id" => "añadir", "class" => "btn btn-primary text-white float-right mr-4"]); ?>
@@ -168,6 +174,23 @@ $this->registerCss('
             <th>Valor</th>
             </thead>
             <tbody id="ret">
+            </tbody>
+        </table>
+    </div>
+    <div id="tabs-3">
+        <table class="table table-dark">
+            <?php echo HTML::tag("a", "añadir detalle", ["value" => "ff", "id" => "añadir2", "class" => "btn btn-primary text-white float-right mr-4"]); ?>
+            <thead>
+            <th>Cantidad</th>
+            <th> Cuenta Contable </th>
+            <th> Valor unitario </th>
+            <th> Ret.IMP </th>
+            <th> Ret.IVA </th>
+            <th> Descuento %</th>
+            <th> Valor final </th>
+            <th> Eliminar </th>
+            </thead>
+            <tbody id="asiento">
             </tbody>
         </table>
     </div>
@@ -225,6 +248,7 @@ $this->registerJsFile('https://code.jquery.com/ui/1.11.3/jquery-ui.min.js', ['de
 </div>
 <script type="text/javascript">
     var count=0;
+    var count2=0;
     cov=[]
 
     $(document).ready(function(){
@@ -269,6 +293,7 @@ $this->registerJsFile('https://code.jquery.com/ui/1.11.3/jquery-ui.min.js', ['de
             $("#vendedor").val("")
             $("#ven").hide()
                 $(".preu").val("");
+
         }
         else{
             $("#vendedor").show()
@@ -286,29 +311,33 @@ $this->registerJsFile('https://code.jquery.com/ui/1.11.3/jquery-ui.min.js', ['de
 
         });
     })
-    $('#listtype').change(function(){
-        c=$(this).val();
-
-            pro = '<?php echo $prolist ?>'
+    $('#tipodocu').change(function(){
+        tipo=$(this).val();
+        (tipo==='Proveedor')?pro = '<?php echo $proegre?>':pro = '<?php echo $prolist ?>'
             dapro = JSON.parse(pro)
-            $('.s').remove();
-            for (i in dapro) {
-                var c = '<option class="s" value="' + i + '">"' + i + '"</option>'
-                $('.la').append(c);
+        console.log(dapro)
+        $('.s').remove();
+        for (i in dapro) {
+            h+= '<option class="s" value="'+i+'">"'+i+'"</option>'
 
         }
-        })
-$(añadir).click(function(){
-count=count+1
+        $('.la').append(h);
 
-      pro='<?php echo $prolist ?>'
+
+
+    })
+
+$(añadir).click(function(){
+    count=count+1
+    tipo=$('#tipodocu').val();
+
+    (tipo==='Proveedor')?pro = '<?php echo $proegre?>':pro = '<?php echo $prolist ?>'
     reteiva= '<?php echo $reteiva?>'
     reteimp= '<?php echo $reteimp?>'
     codeimp='<?php echo $account?>'
     codeiva='<?php echo $codeiva?>'
-    console.log(reteimp)
     var reimp=JSON.parse(reteimp)
-   var reiva=JSON.parse(reteiva)
+    var reiva=JSON.parse(reteiva)
     var codeim=JSON.parse(codeimp)
     var codeiv=JSON.parse(codeiva)
     dapro=JSON.parse(pro)
@@ -332,7 +361,7 @@ count=count+1
     }
     c+='</td>'
     c+='<td>'
-    c+= '<div class="form-group field-idn"><select id="retiva-'+count+'" class="js-retiva m-5" name="state"><option value="">Select...</option>'
+    c+= '<div class="form-group field-idn"><select id="retiva-'+count+'" class="form-control js-retiva m-5" name="state"><option value="">Select...</option>'
     for(i in reiva){
         c+='<option class="s" value="'+reiva[i]+'">"'+i+'"</option>'
     }
@@ -347,9 +376,6 @@ count=count+1
     c+='<button class="btn btn-danger mdwsdsdsft-3 remove" id="'+count+'">Eliminar</button>'
     c+='</td>'
     c+='</tr>'
-    $('#hola').click(function(){
-
-    });
 
     $('#actionmodal').click(function(){
         $('#modal2').show()
@@ -414,7 +440,7 @@ $(document).on('keyup','.preu',function(){
         $('.g').each(function(){
             if(iva[item[c]]==12){
                 sumiv=sumiv+parseFloat($(this).val());
-            }
+            }pg_catalog
             if(iva[item[c]]==0){
                 sumn=sumn+parseFloat($(this).val());
             }
@@ -431,7 +457,7 @@ $(document).on('keyup','.preu',function(){
     })
     $('#nuevo').append(c);
     $('.js-retimp').select2({width:'100px',dropdownCssClass : 'select12'});
-
+    $('.js-retiva').select2({width: '100px',dropdownCssClass:'select12'});
     $('.js-retimp').on('change', function() {
         datas= $(this).attr('id').split('-')[1];
         console.log(datas)
@@ -442,7 +468,6 @@ $(document).on('keyup','.preu',function(){
             url: '<?php echo Yii::$app->request->baseUrl. '/cliente/getretention'?>',
             success: function (data) {
                 slug=JSON.parse(data)
-                console.log(slug)
                 var tab='<tr id="ret-'+datas+'" class="tr1">'
                 tab+='<td id="tipo-'+datas+'">'
                 tab+= '<div class="form-group field-idn"><select id="timp-'+datas+'" class="js-rimp js-t" name="state"><option value="">Select...</option>'
@@ -490,7 +515,6 @@ $(document).on('keyup','.preu',function(){
 
         })
     })
-    $('.js-retiva').select2({width: '100px',dropdownCssClass:'select2'});
     $('.js-retiva').on('change', function() {
         datas= $(this).attr('id').split('-')[1];
         console.log(datas)
@@ -554,7 +578,59 @@ $(document).on('keyup','.preu',function(){
 
 })
 
-
+$('#añadir2').click(function(){
+    count2=count2+1
+    charta='<?php echo $accountd ?>'
+    reteiva= '<?php echo $reteiva?>'
+    reteimp= '<?php echo $reteimp?>'
+    codeimp='<?php echo $account?>'
+    codeiva='<?php echo $codeiva?>'
+    console.log(reteimp)
+    var reimp=JSON.parse(reteimp)
+    var reiva=JSON.parse(reteiva)
+    var codeim=JSON.parse(codeimp)
+    var codeiv=JSON.parse(codeiva)
+    var accountd=JSON.parse(charta)
+    var c='<tr id="in'+count2+'">'
+    c+='<td>'
+    c+='<div class="form-group field-can"> <label class="control-label" for="facturabody-'+count+'-cant"></label><input style="width:40px"type="text" id="can2'+count2+'" class="form-control cant2" name="FacturaBody['+count2+'][cant]" value="" onkey="javascript:fields2()">'
+    c+='</td>'
+    c+='<td>'
+    c+='<div class="form-group field-valo"><label class="control-label" for="valo"></label><select style="width: 100px;height: 100%"  id="a'+count2+'" class="chart form-control" name="Product['+count2+'][name]"> <option value="">Select...</option>'
+    for(i in accountd){
+        c+='<option class="s" value="'+i+'">"'+accountd[i]+'"</option>'
+    }
+    c+='</td>'
+    c+='<td>'
+    c+='<div class="form-group field-idn"><label class="control-label" for="facturabody-'+count2+'-precio_u"></label><input type="text" id="idn'+count+'" class="form-control preu" name="FacturaBody['+count2+'][precio_u]" value=""><div class="help-block"></div> </div> '
+    c+='</td>'
+    c+='<td>'
+    c+= '<div class="form-group field-idn"><select id="retim-'+count2+'" class="form-control js-retim m-5" name="state"><option value="">Select...</option>'
+    for(i in reimp){
+        c+='<option class="s" value="'+reimp[i]+'">"'+i+'"</option>'
+    }
+    c+='</td>'
+    c+='<td>'
+    c+= '<div class="form-group field-idn"><select id="retiv-'+count2+'" class="form-control js-reti m-5" name="state"><option value="">Select...</option>'
+    for(i in reiva){
+        c+='<option class="s" value="'+reiva[i]+'">"'+i+'"</option>'
+    }
+    c+='</td>'
+    c+='<td>'
+    c+='<div class="form-group field-desc"><label class="control-label" for="facturabody-+count+-desc"></label><input type="text" id="desc'+count2+'" class=" form-control desc" name="FacturaBody['+count2+'][desc]" value="">'
+    c+='</td>'
+    c+='<td>'
+    c+='<div class="form-group field-valtotal"><label class="control-label" for="facturabody-+count+-precio_total"></label><input type="text" id="valtotal'+count2+'" class="form-control  g" name="FacturaBody['+count2+'][precio_total]" value="" readonly>'
+    c+='</td>'
+    c+='<td>'
+    c+='<button class="btn btn-danger mdwsdsdsft-3 remove2" id="'+count2+'">Eliminar</button>'
+    c+='</td>'
+    c+='</tr>'
+    $('#asiento').append(c);
+    $('.js-retim').select2({width:'100px',dropdownCssClass : 'select12'});
+    $('.chart').select2({width:'100px',dropdownCssClass : 'select12'});
+    $('.js-reti').select2({width: '100px',dropdownCssClass:'select12'});
+})
 
 function calcular(){
     tip= $('#tipodocu').val();
@@ -684,7 +760,7 @@ function calcular(){
 
     })
     $('#añadir')
-$('#buttonsubmit').click(function(){
+    $('#buttonsubmit').click(function(){
     var f=false;
     cantidad=[];
     preciou=[];
