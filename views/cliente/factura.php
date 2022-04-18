@@ -312,6 +312,7 @@ $this->registerJsFile('https://code.jquery.com/ui/1.11.3/jquery-ui.min.js', ['de
         });
     })
     $('#tipodocu').change(function(){
+        h=''
         tipo=$(this).val();
         (tipo==='Proveedor')?pro = '<?php echo $proegre?>':pro = '<?php echo $prolist ?>'
             dapro = JSON.parse(pro)

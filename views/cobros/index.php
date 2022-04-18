@@ -137,9 +137,9 @@ $form=ActiveForm::begin()
                         </td>
                         <td><?=\Yii::$app->formatter->asDate($header->f_timestamp, 'dd/MM/yyyy') ?></td>
                         <td>Factura</td>
-                        <td><?= $body->total-$sumret ?></td>
+                        <td><?= sprintf('%.2f',$body->total-$sumret) ?></td>
                         <?php if($upt==False){ ?>
-                            <td><?=$body->total-$sumret?></td>
+                            <td><?=sprintf('%.2f',$body->total-$sumret)?></td>
 
                         <?php } else {?>
                             <?php $d=$chargem::findOne(["n_document"=>$header->n_documentos]);
@@ -149,7 +149,7 @@ $form=ActiveForm::begin()
                             ])->one();
                             Yii::debug($d->id)
                             ?>
-                            <td><?=$ac->saldo?></td>
+                            <td><?=sprintf('%.2f',$ac->saldo)?></td>
                         <?php } ?>
                         <td><?= $form->field($charguesd,'amount',[
                                 'template' => '<div class="input-group">{input}
@@ -182,10 +182,10 @@ $('#efectivo').click(function() {
 $('#copiar').click(function(){
     
     if($v==0){
-       $('#labec').val($body->total);
+       $('#labec').val($body->total-$sumret);
    }
    else{
-       $('#labec').val($body->total);
+       $('#labec').val($body->total-$sumret);
    }
 })
        $('#tipodocu').change(function(){
