@@ -59,19 +59,19 @@ class Product extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
-            'status' => 'Status',
-            'category' => 'Category',
-            'product_type_id' => 'Product Type ID',
-            'brand' => 'Brand',
-            'product_iva_id' => 'Product Iva ID',
+            'name' => 'Nombre',
+            'status' => 'Estado',
+            'category' => 'Categoria',
+            'product_type_id' => 'Tipo de Producto',
+            'brand' => 'Marca',
+            'product_iva_id' => 'IVA',
             'precio' => 'Precio',
             'costo' => 'Costo',
             'chairaccount_id' => 'Chairaccount ID',
             'Chairinve' => 'Chairinve',
             'charingresos' => 'Charingresos',
             'institution_id' => 'Institution ID',
-            'type_fact' => 'Type Fact',
+            'type_fact' => 'Tipo de Contribuyente',
         ];
     }
 

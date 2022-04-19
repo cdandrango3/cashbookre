@@ -31,8 +31,6 @@ $listpbody=ArrayHelper::map($dbo,"id","cant");
 $listdbo=\yii\helpers\Json::encode($dbo);
 yii::debug($listdbo);
 $listcosto=ArrayHelper::map($precio,"name","costo");
-$phpvar="s";
-print_r($phpvar);
 $listtypepro=ArrayHelper::map($modeltype,"name","name");
 if($head_fact->tipo_de_documento=="Cliente") {
     $listruc = ArrayHelper::map($query, "id", "name");
@@ -49,13 +47,9 @@ yii::debug($n_pro);
 $authItemChild = Yii::$app->request->post('Person');
 $auth = Yii::$app->request->post('HeadFact');
 $request=Yii::$app->request->post('FacturaBody');
-
-
 ?>
 
 <div class="cliente-factura">
-
-
     <?php $form = ActiveForm::begin(); ?>
     <div class="container">
         <div class="card ">
@@ -65,7 +59,9 @@ $request=Yii::$app->request->post('FacturaBody');
             <div class="card-body p-4">
     <div class="row">
         <div class="col-6">
+
             <?php $model->f_timestamp=$head_fact->f_timestamp?>
+            <?= Html::label('Fecha de la emision')?>
             <?= DatePicker::widget([
                 'model'=>$model,
                 'attribute' => 'f_timestamp',
@@ -106,7 +102,7 @@ $request=Yii::$app->request->post('FacturaBody');
         </div>
     </div>
 </div>
-<?php echo HTML::tag("a", "mostrar", ["value" => "ff", "id" => "añadir", "class" => "btn btn-success float-right mr-4"]); ?>
+<?php echo HTML::tag("a", "añadir detalle", ["value" => "ff", "id" => "añadir", "class" => "btn btn-primary float-right mr-4"]); ?>
 <table class="table table-dark">
     <thead>
     <th>Cantidad</th>
@@ -128,16 +124,16 @@ $request=Yii::$app->request->post('FacturaBody');
     <div class="col-5">
         <?= $form->field($produ, 'costo')->label("subtotal")->textInput(['value' =>"" ,"id"=>"pre",'type'=>"hidden"]) ?>
         <td><?= $form->field($model3, 'subtotal12')->label("subtotal 12%")->textInput(['readonly' => true ,'value' =>$dfin->subtotal12 ,"id"=>"sub"]) ?></td>
-        <td><?= $form->field($model3, 'subtotal0')->label("subtotal 0%")->textInput(['readodrfgtdresfgdrnly' => true ,'value' =>$dfin->subtotal0 ,"id"=>"sub0"]) ?></td>
+        <td><?= $form->field($model3, 'subtotal0')->label("subtotal 0%")->textInput(['readonly' => true ,'value' =>$dfin->subtotal0 ,"id"=>"sub0"]) ?></td>
         <td><?= $form->field($model3, 'descuento')->label("descuento")->textInput(['readonly' => true ,'value' =>$dfin->descuento ,"id"=>"desc"]) ?></td>
         <td><?= $form->field($model3, 'iva')->label("iva")->textInput(['readonly' => true ,'value' =>$dfin->iva ,"id"=>"iva"]) ?></td>
         <td><?= $form->field($model3, 'total')->label("total")->textInput(['readonly' => true ,'value' =>$dfin->total ,"id"=>"total"]) ?></td>
 
     </div>
-</div>
-<?= Html::submitButton('Submit', ['class' => 'btn btn-primary','id'=>"buttonsubmit",'data' => [
+    <?= Html::submitButton('Guardar', ['class' => 'btn btn-primary mb-5 float-right','id'=>"buttonsubmit",'data' => [
 
-]]) ?>
+    ]]) ?>
+</div>
 
 
 

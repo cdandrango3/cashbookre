@@ -40,9 +40,10 @@ $listpr=ArrayHelper::map($model2,"name","name");
                 <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
                 <?= $form->field($model, 'status')->checkbox() ?>
-                <?=$form->field($model2[0],"name")->dropDownList($listpr,['prompt'=>'Select...','readonly'=>false,'id'=>'listpr'])->label("tipo");?>
+                <?=$form->field($model2[0],"name")->dropDownList($listpr,['prompt'=>'Select...','readonly'=>false,'id'=>'listpr'])->label("Tipo");?>
+                <?=$form->field($model,"type_fact")->dropDownList(["Cliente"=>"Cliente","egresos"=>"Proveedor"],['prompt'=>'Select...','readonly'=>false,'id'=>'opt']);?>
 
-                <?= $form->field($model, 'category')->textInput(['maxlength' => true]) ?>
+                <?= $form->field($model, 'category')->textInput(['maxlength' => true])->label() ?>
 
                     </div>
                     <div class="col-lg-6 col-sm-6 col-md-6 col-12 ">
@@ -65,7 +66,7 @@ $listpr=ArrayHelper::map($model2,"name","name");
         <div class="card-body">
             <div class="row">
                 <div class="col-lg-6 col-sm-6 col-md-6 col-12 ">
-
+                    <div class="ingresos">
                     <?=HTML::tag("label","Ingresos")?>
                     <?=
                     Select2::widget([
@@ -76,19 +77,19 @@ $listpr=ArrayHelper::map($model2,"name","name");
                         'data' => $accountdataingresos ,
                         'options' => [
                             'placeholder' => 'Seleccione una cuenta contable',
+                            'id'=>"ingres"
                         ],
                         'pluginOptions' => [
                             'allowClear' => true,
                         ],
                     ]);
                     ?>
-
+                    </div>
 
 
                     <br>
                     <br>
-                    <?=HTML::tag("label","Activos")?>
-
+                    <?=HTML::tag("label","Activos",["id"=>"activos"])?>
                     <?=
                     Select2::widget([
                         'model' => $model,
@@ -107,7 +108,7 @@ $listpr=ArrayHelper::map($model2,"name","name");
                     <br>
                     <br>
                     <div class="inve">
-                    <?=HTML::tag("label","Inventarios")?>
+                    <?=HTML::tag("label","Inventarios",["id"=>"linventario"])?>
                     <?=
 
                     Select2::widget([
@@ -132,28 +133,7 @@ $listpr=ArrayHelper::map($model2,"name","name");
         <div class="form-group">
             <?= Html::submitButton('Guardar', ['class' => 'btn btn-success']) ?>
         </div>
-                <?php
-                $js= <<< JS
-               $('#listpr').change(function(){
-                        
-                      c=$(this).val();
-                      
-                      if(c=='servicio'){
-                      $('#account').parent().hide();
-                      $('#listpro').val('0');
-                          
-                      }
-                      if(c=='producto'){
-                       $('#account').parent().show();
-                       $('#account').show();
-                      $('#listpro').attr({
-                      
-                      });
-                      }
-                     });
-JS;
-                $this->registerJs($js, View::POS_READY);
-                ?>
+
 
 
                 <?php ActiveForm::end(); ?>
@@ -162,7 +142,35 @@ JS;
 
 
 </div>
-<script>
-
-
-</script>
+<?php
+$js= <<< JS
+               $('#listpr').change(function(){
+                      c=$(this).val();
+                      if(c=='servicio'){
+                      $('#account').parent().hide();
+                      $('#listpro').val('0');
+                      }
+                      if(c=='producto'){
+                       $('#account').parent().show();
+                       $('#ingres').parent().show();
+                       $('#activos').text("Inventario");
+                            $('#linventario').text("Egresos");
+                       $('#account').show();
+                      $('#listpro').attr({
+                      
+                      });
+                      }
+                     });
+                    $('#opt').change(function(){
+                        fa=$('#listpr').val();
+                        ha=$(this).val();
+                        if(fa=="servicio" && ha=="egresos"){
+                            $('#ingres').parent().hide();
+                            $('#activos').text("Pasivos");
+                            $('#linventario').text("Egresos");
+                            $('#account').parent().show();
+                        }
+                    })
+JS;
+$this->registerJs($js, View::POS_READY);
+?>

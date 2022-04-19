@@ -375,7 +375,7 @@ public function actionIndex($tipos){
                                         $debea[] = $cos->chairaccount_id;
                                     } else {
                                         if ($cos->product_type_id == 2){
-                                            $debea[] = $cos->chairaccount_id;
+                                            $debea[] = $cos->Chairinve;
                                         }
                                 }
                                     $suma[]=$bod->precio_total;
@@ -500,7 +500,8 @@ public function actionIndex($tipos){
                                     );
 
                                     $context = stream_context_create($opts);
-                                    file_get_contents('http://backendphp23.herokuapp.com/web/cuentaspagar', false, $context);
+                                    file_get_contents('http://localhost:8888/cuentaspagar', false, $context);
+                                    /*file_get_contents('http://backendphp23.herokuapp.com/web/cuentaspagar', false, $context);*/
 
 
                                 }
