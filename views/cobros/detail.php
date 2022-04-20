@@ -48,7 +48,7 @@ $char=ChartAccounts::findOne(["id"=>$transaccion->chart_account]);
                 Cuenta de Cobro :   <?=$char->slug?>
             </div>
             <div>
-                Total :   <?=$transaccion->amount?> $
+                Total :  $ <?= sprintf('%.2f', $transaccion->amount)?>
             </div>
             <div>
                 Descripcion :   <?=$model2->Description?>
@@ -80,9 +80,9 @@ $char=ChartAccounts::findOne(["id"=>$transaccion->chart_account]);
                     <td><?= HTML::a($model2->n_document,Url::to(["/cliente/viewf","id"=>$model2->n_document]))?></td>
                     <td><?= Yii::$app->formatter->asDate($transaccion->date,'yyyy-MM-dd')?></td>
                     <td>Factura</td>
-                    <td><?= $transaccion->balance ?></td>
-                    <td><?= $transaccion->saldo?></td>
-                    <td><?= $transaccion->amount?></td>
+                    <td><?= sprintf('%.2f',$transaccion->balance) ?></td>
+                    <td><?= sprintf('%.2f',$transaccion->saldo)?></td>
+                    <td><?= sprintf('%.2f',$transaccion->amount)?></td>
                 </tr>
                 </tbody>
             </table>

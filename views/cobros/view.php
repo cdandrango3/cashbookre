@@ -37,7 +37,7 @@
             <td><?= $tipo->type_charge ?></td>
 
             <td><?= $chart->code." ".$chart->slug ?></td>
-            <td><?= $tran->amount?></td>
+            <td><?= sprintf('%.2f',$tran->amount)?></td>
         </tr>
     <?php endforeach?>
 

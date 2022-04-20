@@ -13,6 +13,7 @@ use app\models\Facturafin;
 use app\models\HeadFact;
 use app\models\Institution;
 use app\models\Person;
+use app\models\Product;
 use app\models\Retention;
 use DateTime;
 use Yii;
@@ -103,7 +104,16 @@ class CobrosController extends Controller
                                             $this->asientoscreate($gr, 13234, $charges_detail->chart_account, $charges_detail->amount,$head->n_document,$charges_detail->Description);
                                         }
                                     }
-
+                                    $fac=FacturaBody::find()->where(["id_head"=>$_GET["id"]])->asArray()->all();
+                                    $data=[];
+                                    $da=[];
+                                    foreach($fac as $fact){
+                                        $pro=Product::findOne([$fact["id_producto"]]);
+                                        $data["Valor"]=$fact['precio_u'];
+                                        $data["Rubro"]=$pro->category;
+                                        $data["SubRubro"]=$pro->name;
+                                        array_push($da, $data);
+                                    }
                                     $postdata = http_build_query(
                                         array(
                                             'Comprobante' => $charges_detail->comprobante,
@@ -111,10 +121,8 @@ class CobrosController extends Controller
                                             'Descripcion' => $charges_detail->Description,
                                             'Fecha' => strval($charse->date),
                                             'Proveedor' => 'XVYYEdCrgnmlkM0YFhpp',
-                                            'Rubro' =>'fact1',
-                                            'SubRubro' => 'fact1',
-                                            'Valor' => $charges_detail->amount,
-
+                                            'Pagos' =>$da,
+                                            'Valor' =>$charges_detail->amount,
                                         )
                                     );
 
@@ -129,7 +137,7 @@ class CobrosController extends Controller
 
                                     $context = stream_context_create($opts);
                                     yii::debug($context);
-                                    file_get_contents('http://backendphp23.herokuapp.com/web/egresos', false, $context);
+                                    file_get_contents('http://localhost:8888/cliente/egresos', false, $context);
                                 }
                             }
                         }
@@ -179,6 +187,16 @@ class CobrosController extends Controller
                                         }
                                     }
                                     $charse=ChargesDetail::findOne(["id"=>$charges_detail->id]);
+                                    $fac=FacturaBody::find()->where(["id_head"=>$_GET["id"]])->asArray()->all();
+                                    $data=[];
+                                    $da=[];
+                                    foreach($fac as $fact){
+                                        $pro=Product::findOne([$fact["id_producto"]]);
+                                        $data["Valor"]=$fact['precio_u'];
+                                        $data["Rubro"]=$pro->category;
+                                        $data["SubRubro"]=$pro->name;
+                                        array_push($da, $data);
+                                    }
                                     $postdata = http_build_query(
                                         array(
                                             'Comprobante' => $charges_detail->comprobante,
@@ -186,9 +204,8 @@ class CobrosController extends Controller
                                             'Descripcion' => $charges_detail->Description,
                                             'Fecha' => strval($charse->date),
                                             'Proveedor' => 'XVYYEdCrgnmlkM0YFhpp',
-                                            'Rubro' =>'fact1',
-                                            'SubRubro' => 'fact1',
-                                            'Valor' => $charges_detail->amount,
+                                            'Pagos' =>$da,
+                                            'Valor'=>$charges_detail->amount,
 
                                         )
                                     );
@@ -204,7 +221,7 @@ class CobrosController extends Controller
 
                                     $context = stream_context_create($opts);
                                     yii::debug($context);
-                                    file_get_contents('http://backendphp23.herokuapp.com/web/egresos', false, $context);
+                                    file_get_contents('http://localhost:8888/egresos', false, $context);
                                 }
                             }
                         }

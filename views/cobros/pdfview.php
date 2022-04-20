@@ -3,11 +3,14 @@
 
 use app\models\AccountingSeatsDetails;
 use app\models\ChartAccounts;
+use app\models\FacturaBody;
 use app\models\Person;
+use app\models\Retention;
 
 $person=Person::findOne(["id"=>$model2->person_id]);
 $chart_account=ChartAccounts::findOne(["id"=>$charge->chart_account]);
 $isas=$_GET["isbody"];
+$facbod=FacturaBody::find()->where(["id_head"=>$id])->all();
 
 ?>
 
@@ -74,22 +77,22 @@ $isas=$_GET["isbody"];
         <td>Documentos</td>
         <td>Concepto</td>
         <td>Valor Doc</td>
-        <td>A Cobrar</td>
         <td>Saldo Act</td>
+        <td>A Cobrar</td>
     </tr>
     </thead>
     <tbody>
     <tr>
         <td><?= $model2->n_document?></td>
         <td> transfer</td>
-        <td><?= $charge->balance ?></td>
-        <td><?= $charge->saldo ?></td>
-        <td><?= $charge->amount ?></td>
+        <td><?= sprintf('%.2f',$charge->balance) ?></td>
+        <td><?= sprintf('%.2f',$charge->saldo) ?></td>
+        <td><?= sprintf('%.2f',$charge->amount) ?></td>
     </tr>
     <tr>
         <td colspan="3"><div align="right">Total</div></td>
-        <td><?=$charge->saldo?></td>
-        <td><?=$charge->amount?></td>
+        <td><?=sprintf('%.2f',$charge->saldo)?></td>
+        <td><?= sprintf('%.2f',$charge->amount) ?></td>
     </tr>
     </tbody>
 

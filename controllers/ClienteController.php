@@ -101,6 +101,7 @@ public function actionIndex($tipos){
                     $lastfact = HeadFact::find()->orderBy(new \yii\db\Expression("string_to_array(n_documentos,'-')::int[] DESC"))->one();
                     $lastfactura = explode("-", $lastfact->n_documentos);
                     $num = intval($lastfactura[count($lastfactura) - 1] + 1);
+                    yii::debug($num);
                     $nfactt = $this->getnfact(1, 3) . "-" . $this->getnfact(1, 3) . "-" . $this->getnfact($num, 9);
                     $head->updateAttributes(["id_anulacion" => $anulacion->id]);
                     $data = $head->attributes;
@@ -461,21 +462,28 @@ public function actionIndex($tipos){
                                         }
                                     }
                                 }
-                                $fac=FacturaBody::find()->where(["id_head"=>$model->n_documentos])->all();
-                                foreach($fac as $fact) {
-                                    $producto=Product::findOne([$fact->id_producto]);
+                                $fac=FacturaBody::find()->where(["id_head"=>$model->n_documentos])->asArray()->all();
                                     $proveedor=Person::findOne([$model->id_personas]);
+                                 $data=[];
+                                 $da=[];
+                                   foreach($fac as $fact){
+                                       $pro=Product::findOne([$fact["id_producto"]]);
+                                       $data["Cantidad"]=array('stringValue'=>$fact['cant']);
+                                       $data["Coste"]=array('stringValue'=>$fact['precio_u']);
+                                       $data["Rubro"]=array('stringValue'=>$pro->category);
+                                       $data["SubRubro"]=array('stringValue'=>$pro->name);
+                                       array_push($da, $data);
+                                   }
                                     $postdata = http_build_query(
                                         array(
-                                            'Cantidad' => $fact->cant,
-                                            'Costo' => $fact->precio_u,
+                                            'Cuentas' => array("values"=>$da),
                                             'CuentaBanco' => 'Banco Pichincha',
                                             'CuentaNombre' => 'Cuenta1',
                                             'CuentaUid' => 'XVYYEdCrgnmlkM0YFhpp',
                                             'Detalle' =>$facturafin->description,
                                             'Fecha' => $model->f_timestamp,
                                             'FechaFactura' => $model->f_timestamp,
-                                            'Nombre' => 'Banco 1',
+                                            'Nombre' => 'Banco',
                                             'NumeroFactura' => $model->n_documentos,
                                             'Pagado' => 'Si',
                                             'Plazo' => '10 dias',
@@ -483,11 +491,10 @@ public function actionIndex($tipos){
                                             'ProveedorId' => $proveedor->id,
                                             'ProveedorNombre' => $proveedor->name,
                                             'ProveedorRuc' => $proveedor->ruc,
-                                            'Rubro' => $producto->category,
-                                            'SubRubro' => $producto->name,
 
                                         )
                                     );
+                                    yii::debug($postdata);
 
                                     $opts = array('http' =>
                                         array(
@@ -504,7 +511,6 @@ public function actionIndex($tipos){
                                     /*file_get_contents('http://backendphp23.herokuapp.com/web/cuentaspagar', false, $context);*/
 
 
-                                }
                                 return $this->redirect('viewf?id='.$model->n_documentos);
 }
 else{

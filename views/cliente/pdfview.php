@@ -11,8 +11,24 @@ $get=$_GET["ischair"];
 yii::debug($get);
 $sale=Person::findOne(["id"=>$model->id_saleman]);
 $isret=FacturaBody::find()->where(["id_head"=>$model->n_documentos])->andWhere('retencion_imp IS NOT NULL OR retencion_iva IS NOT NULL')->exists();
-$ret=FacturaBody::find()->where(["id_head"=>$model->n_documentos])->one()
+$ret=FacturaBody::find()->where(["id_head"=>$model->n_documentos])->one();
+$sum=0;
+        $facbod=FacturaBody::find()->where(["id_head"=>$_GET["id"]])->all();
+        foreach ($facbod as $fac){
+            if(!is_null($fac->retencion_imp)){
+                $retencion=Retention::findOne($fac->retencion_imp);
+                $base=$fac->precio_total;
+                $porcentaje=$retencion->percentage;
+                $sum+=$base*$porcentaje/100;
+            }
+            if(!is_null($fac->retencion_iva)){
+                $retencion=Retention::findOne($fac->retencion_iva);
+                $base=($fac->precio_total*12)/100;
+                $porcentaje=$retencion->percentage;
+                $sum+=$base*$porcentaje/100;
+            }
 
+        }
 ?>
 <table border="0" cellpadding="0" cellspacing="0" style="width:100%;font-family: Arial;font-size:9pt">
 
@@ -128,9 +144,9 @@ $ret=FacturaBody::find()->where(["id_head"=>$model->n_documentos])->one()
                 <tr>
                     <td><?=$codesri?></td>
                     <td><?=$tipo?></td>
-                    <td><?=$base?></td>
-                    <td><?=$porcentaje?></td>
-                    <td><?=$total?></td>
+                    <td><?=sprintf('%.2f',$base)?></td>
+                    <td><?=sprintf('%.2f',$porcentaje)?></td>
+                    <td><?=sprintf('%.2f',$total)?></td>
                 </tr>
             <?php endif?>
         <?php if(!is_null($mbody->retencion_iva)):?>
@@ -263,21 +279,22 @@ $ret=FacturaBody::find()->where(["id_head"=>$model->n_documentos])->one()
 
     <tr>
         <td>
-            <strong>Subtotal 12 %:   </strong> </td> <td> <div class="su"><?=$modelfin->subtotal12?></td>
+            <strong>Subtotal 12 %:   </strong> </td> <td> <div class="su"><?= sprintf('%.2f', $modelfin->subtotal12)?></td>
     </tr>
     <tr>
         <td>
-            <strong>Subtotal 0%:   </strong> </td> <td> <div class="su"><?=$modelfin->subtotal0?:0 ?> </td>
+            <strong>Subtotal 0%:   </strong> </td> <td> <div class="su"><?= sprintf('%.2f',$modelfin->subtotal0?:0) ?> </td>
     </tr>
     <tr>
-        <td><strong>Iva: </strong> </td> <td> <div class="su"> <?=$modelfin->iva ?></td></div>
+        <td><strong>Iva: </strong> </td> <td> <div class="su"> <?=sprintf('%.2f',$modelfin->iva) ?></td></div>
     </tr>
     <?php if(is_null($modelfin->descuento)):?>
-        <tr> <td> <strong>Descuento: </strong> </td> <div class="su">  <td><?= 0 ?></td></div></tr>
+        <tr> <td> <strong>Descuento: </strong> </td> <div class="su">  <td><?= 0.00 ?></td></div></tr>
     <?php else:?>
-        <tr> <td> <strong>Descuento: </strong> </td> <div class="su">  <td><?=$modelfin->descuento ?></td></div></tr>
+        <tr> <td> <strong>Descuento: </strong> </td> <div class="su">  <td><?=sprintf($modelfin->descuento)?></td></div></tr>
     <?php endif?>
-    <tr> <td> <strong>Total: </strong> </td> <td><div class="su"><?=$modelfin->total ?></td></div></tr>
+    <tr> <td> <strong>Total: </strong> </td> <td><div class="su"><?=sprintf($modelfin->total)?></td></div></tr>
+    <tr> <td> <strong>Saldo: </strong> </td> <td><div class="su"><?=sprintf($modelfin->total-$sum) ?></td></div></tr>
 </table>
 <br>
 <br>

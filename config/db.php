@@ -1,6 +1,6 @@
 <?php
 /**/
-
+/*
 return [
     'class' => 'yii\db\Connection',
     'dsn' => 'pgsql:host=localhost;dbname=tre1',
@@ -15,13 +15,13 @@ return [
     ], // Postg
 
 ];
+*/
 
-/*
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'pgsql:host=ec2-54-157-79-121.compute-1.amazonaws.com;dbname=dfn3m087fsipl',
-    'username' => 'rwrphelswemffi',
-    'password' => '434801de2d2ed6e93f7674f6b2d68d4f8e7e2820851db7aa2cb97069ae9f2ae4',
+    'dsn' => 'pgsql:host=ec2-34-207-12-160.compute-1.amazonaws.com;dbname=de0a0pru442kln',
+    'username' => 'caqppbzgwggoue',
+    'password' => '0af11c17f6216fd38b4366820e516b69f9da4e4093f52eeeca3d68649da5e598',
     'charset' => 'utf8',
     'schemaMap' => [
         'pgsql'=> [
@@ -32,7 +32,7 @@ return [
 
 
 ];
-*/
+
 
 
 

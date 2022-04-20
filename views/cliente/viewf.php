@@ -1,6 +1,8 @@
 <?php
 
+use app\models\FacturaBody;
 use app\models\Product;
+use app\models\Retention;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
@@ -8,6 +10,23 @@ $this->title = 'Consultar Documento Físico';
 $this->params['breadcrumbs'][] = $this->title;
 $producto=New Product;
 $this->registerCss("");
+$sum=0;
+$facbod=FacturaBody::find()->where(["id_head"=>$_GET["id"]])->all();
+foreach ($facbod as $fac){
+    if(!is_null($fac->retencion_imp)){
+        $retencion=Retention::findOne($fac->retencion_imp);
+        $base=$fac->precio_total;
+        $porcentaje=$retencion->percentage;
+        $sum+=$base*$porcentaje/100;
+    }
+    if(!is_null($fac->retencion_iva)){
+        $retencion=Retention::findOne($fac->retencion_iva);
+        $base=($fac->precio_total*12)/100;
+        $porcentaje=$retencion->percentage;
+        $sum+=$base*$porcentaje/100;
+    }
+
+}
 ?>
 
 
@@ -144,6 +163,7 @@ $this->registerCss("");
             <tr> <td> <strong>Descuento: </strong> </td> <div class="su">  <td><?=sprintf('%.2f',$modelfin->descuento)?></td></div></tr>
         <?php endif?>
         <tr> <td> <strong>Total: </strong> </td> <td><div class="su"><?=sprintf('%.2f',$modelfin->total) ?></td></div></tr>
+    <tr> <td> <strong>Saldo: </strong> </td> <td><div class="su"><?=sprintf('%.2f',$modelfin->total-$sum) ?></td></div></tr>
     </table>
 
                 </table>
