@@ -45,11 +45,11 @@ class Retention extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'id_chart' => 'Id Chart',
-            'percentage' => 'Percentage',
-            'codesri' => 'Codesri',
-            'slug' => 'Slug',
-            'id_charting' => 'Id Charting',
+            'id_chart' => 'Cuentas Contables Egresos',
+            'percentage' => 'Porcentajes',
+            'codesri' => 'Codigo Sri',
+            'slug' => 'Detalle',
+            'id_charting' => 'Cuentas Contables Ingresos',
         ];
     }
 }

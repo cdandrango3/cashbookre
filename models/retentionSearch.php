@@ -2,17 +2,18 @@
 
 namespace app\models;
 
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Retention;
+use app\models\retention;
 
 /**
- * retentionSearch represents the model behind the search form of `app\models\Retention`.
+ * retentionSearch represents the model behind the search form about `app\models\retention`.
  */
-class retentionSearch extends Retention
+class retentionSearch extends retention
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function rules()
     {
@@ -24,7 +25,7 @@ class retentionSearch extends Retention
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function scenarios()
     {
@@ -41,9 +42,7 @@ class retentionSearch extends Retention
      */
     public function search($params)
     {
-        $query = Retention::find();
-
-        // add conditions that should always apply here
+        $query = retention::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -57,7 +56,6 @@ class retentionSearch extends Retention
             return $dataProvider;
         }
 
-        // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
             'id_chart' => $this->id_chart,
@@ -66,8 +64,8 @@ class retentionSearch extends Retention
             'type' => $this->type,
         ]);
 
-        $query->andFilterWhere(['ilike', 'codesri', $this->codesri])
-            ->andFilterWhere(['ilike', 'slug', $this->slug]);
+        $query->andFilterWhere(['like', 'codesri', $this->codesri])
+            ->andFilterWhere(['like', 'slug', $this->slug]);
 
         return $dataProvider;
     }
