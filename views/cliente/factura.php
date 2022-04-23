@@ -798,10 +798,16 @@ function calcular(){
     numero=$('#ndocure').val() || null
     autorirete=$('#autorirete').val() || null
     valcodeimp=zip(codeimp,arraysd)
-
-    console.log(valcodeimp)
     n_docu= $('#ndocu').val();
     if (cantidad.length > 0){
+        if(Object.keys(valcodeimp).length !== 0){
+            if(n_docu ===""){
+             return false
+            }
+
+        }
+
+
     $.ajax({
         method: "POST",
         data: { cantidad:cantidad,produc:pro,preciou:preciou,precioto:preciot,ndocumento:n_docu,retimp:retimp,retinv:retinv,codeimp:JSON.stringify(valcodeimp),nret:numero,autorite:autorirete},
@@ -820,10 +826,8 @@ function calcular(){
         }
 
     })}
-    else{
-        return false
-    }
 
+        return true
 })
     function round(num) {
         var m = Number((Math.abs(num) * 100).toPrecision(15));
