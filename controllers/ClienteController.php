@@ -308,13 +308,16 @@ public function actionIndex($tipos){
                                         $accounting_seats_details->credit = $suma[$i];
                                         $accounting_seats_details->cost_center_id = 1;
                                         $accounting_seats_details->status = true;
-
                                         $accounting_seats_details->save();
                                     }
                                 }
                             }
-
-                            $tr->commit();
+                            if($flag==true){
+                                $tr->commit();
+                            }
+                            else{
+                                $tr->rollback();
+                            }
                             return $this->redirect('viewf?id=' . $model->n_documentos);
                         } else {
                             $fac = FacturaBody::find()->where(["id_head" => $model->n_documentos])->exists();
