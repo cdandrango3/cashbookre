@@ -314,6 +314,7 @@ public function actionIndex($tipos){
                             }
                             if($flag==true){
                                 $tr->commit();
+                                return $this->redirect('viewf?id=' . $model->n_documentos);
                             }
                             else{
                                 $fac = FacturaBody::find()->where(["id_head" => $model->n_documentos])->exists();
@@ -322,7 +323,6 @@ public function actionIndex($tipos){
                                 }
                                 $tr->rollback();
                             }
-                            return $this->redirect('viewf?id=' . $model->n_documentos);
                         } else {
                             $fac = FacturaBody::find()->where(["id_head" => $model->n_documentos])->exists();
                             if ($fac) {
