@@ -19,6 +19,8 @@ use app\models\Retention;
 use app\models\Retentiondetail;
 use app\models\Salesman;
 use Cassandra\Date;
+use DateTime;
+use DateTimeZone;
 use kartik\mpdf\Pdf;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -465,30 +467,34 @@ public function actionIndex($tipos){
                                 $fac=FacturaBody::find()->where(["id_head"=>$model->n_documentos])->asArray()->all();
                                     $proveedor=Person::findOne([$model->id_personas]);
                                  $data=[];
+                                 $fields=[];
+                                 $mapvalues=[];
                                  $da=[];
                                    foreach($fac as $fact){
                                        $pro=Product::findOne([$fact["id_producto"]]);
-                                       $data["Cantidad"]=array('stringValue'=>$fact['cant']);
-                                       $data["Coste"]=array('stringValue'=>$fact['precio_u']);
+                                       $data["Cantidad"]=array('integerValue'=>intval($fact['cant']));
+                                       $data["Coste"]=array('doubleValue'=>floatVal($fact['precio_u']));
                                        $data["Rubro"]=array('stringValue'=>$pro->category);
                                        $data["SubRubro"]=array('stringValue'=>$pro->name);
-                                       array_push($da, $data);
+                                       $fields["fields"]=$data;
+                                       $mapvalues["mapValue"]=$fields;
+                                       array_push($da, $mapvalues);
                                    }
                                     $postdata = http_build_query(
                                         array(
-                                            'Cuentas' => array("values"=>$da),
+                                            'Cuentas' => array('values'=>$da),
                                             'CuentaBanco' => 'Banco Pichincha',
                                             'CuentaNombre' => 'Cuenta1',
                                             'CuentaUid' => 'XVYYEdCrgnmlkM0YFhpp',
                                             'Detalle' =>$facturafin->description,
-                                            'Fecha' => $model->f_timestamp,
-                                            'FechaFactura' => $model->f_timestamp,
-                                            'Nombre' => 'Banco',
+                                            'Fecha' =>$this->createdate($model->f_timestamp),
+                                            'FechaFactura' =>  $this->createdate($model->f_timestamp),
+                                            'Nombre' => 'cashbook',
                                             'NumeroFactura' => $model->n_documentos,
                                             'Pagado' => 'Si',
                                             'Plazo' => '10 dias',
                                             'ProveedorCelular' => $proveedor->phones,
-                                            'ProveedorId' => $proveedor->id,
+                                            'ProveedorId' => $proveedor->id_myhouse?:"no tiene",
                                             'ProveedorNombre' => $proveedor->name,
                                             'ProveedorRuc' => $proveedor->ruc,
 
@@ -1394,5 +1400,14 @@ echo "</td>";
             return sprintf("%s%s", $prefix, str_pad($input, $pad_len, "0", STR_PAD_LEFT));
 
         return str_pad($input, $pad_len, "0", STR_PAD_LEFT);
+    }
+    public function createdate($val){
+        $dateTime = strval($val);
+        $tz_from = 'America/New_York';
+        $newDateTime = new DateTime($dateTime, new DateTimeZone($tz_from));
+        $newDateTime->setTimezone(new DateTimeZone("UTC"));
+        $dateTimeUTC = $newDateTime->format("Y-m-d\TH:i:s\Z");
+        return $dateTimeUTC;
+
     }
 }

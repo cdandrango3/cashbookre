@@ -16,6 +16,8 @@ use app\models\Person;
 use app\models\Product;
 use app\models\Retention;
 use DateTime;
+use DateTimeZone;
+use MongoDB\BSON\Timestamp;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -109,19 +111,22 @@ class CobrosController extends Controller
                                     $da=[];
                                     foreach($fac as $fact){
                                         $pro=Product::findOne([$fact["id_producto"]]);
-                                        $data["Valor"]=$fact['precio_u'];
-                                        $data["Rubro"]=$pro->category;
-                                        $data["SubRubro"]=$pro->name;
-                                        array_push($da, $data);
+                                        $data["Valor"]=array('doubleValue'=>floatVal($fact['precio_u']));
+                                        $data["Rubro"]=array('stringValue'=>$pro->category);
+                                        $data["SubRubro"]=array('stringValue'=>$pro->name);
+                                        $fields["fields"]=$data;
+                                        $mapvalues["mapValue"]=$fields;
+                                        array_push($da, $mapvalues);
                                     }
+                                    $dateTimeUTC=$this->createdate($charse->date);
                                     $postdata = http_build_query(
                                         array(
                                             'Comprobante' => $charges_detail->comprobante,
                                             'CuentaUid' => 'xyudisiiudsuis',
                                             'Descripcion' => $charges_detail->Description,
-                                            'Fecha' => strval($charse->date),
+                                            'Fecha' => $dateTimeUTC,
                                             'Proveedor' => 'XVYYEdCrgnmlkM0YFhpp',
-                                            'Pagos' =>$da,
+                                            'Pagos' =>array("value"=>$da),
                                             'Valor' =>$charges_detail->amount,
                                         )
                                     );
@@ -190,23 +195,27 @@ class CobrosController extends Controller
                                     $fac=FacturaBody::find()->where(["id_head"=>$_GET["id"]])->asArray()->all();
                                     $data=[];
                                     $da=[];
+                                    $fields=[];
+                                    $mapvalues=[];
                                     foreach($fac as $fact){
                                         $pro=Product::findOne([$fact["id_producto"]]);
-                                        $data["Valor"]=$fact['precio_u'];
-                                        $data["Rubro"]=$pro->category;
-                                        $data["SubRubro"]=$pro->name;
-                                        array_push($da, $data);
+                                        $data["Valor"]=array('doubleValue'=>floatVal($fact['precio_u']));
+                                        $data["Rubro"]=array('stringValue'=>$pro->category);
+                                        $data["SubRubro"]=array('stringValue'=>$pro->name);
+                                        $fields["fields"]=$data;
+                                        $mapvalues["mapValue"]=$fields;
+                                        array_push($da, $mapvalues);
                                     }
+                                    $dateTimeUTC=$this->createdate($charse->date);
                                     $postdata = http_build_query(
                                         array(
                                             'Comprobante' => $charges_detail->comprobante,
                                             'CuentaUid' => 'XVYYEdCrgnmlkM0YFhpp',
                                             'Descripcion' => $charges_detail->Description,
-                                            'Fecha' => strval($charse->date),
+                                            'Fecha' => $dateTimeUTC,
                                             'Proveedor' => 'XVYYEdCrgnmlkM0YFhpp',
-                                            'Pagos' =>$da,
+                                            'Pagos' =>array("values"=>$da),
                                             'Valor'=>$charges_detail->amount,
-
                                         )
                                     );
 
@@ -376,5 +385,14 @@ class CobrosController extends Controller
                 }
             }
         }
+    }
+    public function createdate($val){
+        $dateTime = strval($val);
+        $tz_from = 'America/New_York';
+        $newDateTime = new DateTime($dateTime, new DateTimeZone($tz_from));
+        $newDateTime->setTimezone(new DateTimeZone("UTC"));
+        $dateTimeUTC = $newDateTime->format("Y-m-d\TH:i:s\Z");
+        return $dateTimeUTC;
+
     }
 }

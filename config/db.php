@@ -1,9 +1,9 @@
 <?php
 /**/
-/*
+
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'pgsql:host=localhost;dbname=tre1',
+    'dsn' => 'pgsql:host=localhost;dbname=cashbookrespaldo',
     'username' => 'postgres',
     'password' => 'barcelona97.',
     'charset' => 'utf8',
@@ -15,8 +15,8 @@ return [
     ], // Postg
 
 ];
-*/
 
+/*
 return [
     'class' => 'yii\db\Connection',
     'dsn' => 'pgsql:host=ec2-34-207-12-160.compute-1.amazonaws.com;dbname=de0a0pru442kln',
@@ -32,7 +32,7 @@ return [
 
 
 ];
-
+*/
 
 
 

@@ -19,6 +19,7 @@ use Yii;
  * @property bool|null $foreigner
  * @property int|null $categories_id
  * @property string|null $emails
+ * @property string|null $id_myhouse
  * @property int|null $associated_person
  * @property bool $status
  * @property string $created_at
@@ -64,7 +65,7 @@ class Person extends \yii\db\ActiveRecord
             [['person_type_id', 'categories_id', 'associated_person', 'institution_id', 'city_id'], 'default', 'value' => null],
             [['person_type_id', 'categories_id', 'associated_person', 'institution_id', 'city_id', 'province_id'], 'integer'],
             [['special_taxpayer', 'foreigner', 'status'], 'boolean'],
-            [['address', 'emails'], 'string'],
+            [['address', 'emails',"id_myhouse"], 'string'],
             [['created_at', 'updated_at', 'deleted_at'], 'safe'],
             [['ruc'], 'string', 'max' => 13],
             [['cedula'], 'string', 'max' => 10],
@@ -111,6 +112,7 @@ class Person extends \yii\db\ActiveRecord
             'institution_id' => 'Institution ID',
             'city_id' => 'Cantón',
             'province_id' => 'Provincia',
+            'id_myhouse'=>'myhose'
         ];
     }
 
